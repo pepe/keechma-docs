@@ -145,13 +145,14 @@ pre {
     margin: 20px 0;
     border: none;
 }
-
+table.annotated-wrap {
+    margin-top: 59px;
+}
 td.docs {
     width: 38.2%;
     vertical-align: top;
     margin: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 15px;
     border: none;
     background-color: #FFF;
 }
