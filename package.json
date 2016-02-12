@@ -9,6 +9,7 @@
   "author": "Mihael Konjevic",
   "license": "MIT",
   "dependencies": {
+    "fs-extra": "^0.26.5",
     "glob": "^7.0.0",
     "lodash": "^4.3.0",
     "mkdirp": "^0.5.1",
