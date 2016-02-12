@@ -1,4 +1,3 @@
-module.exports = function(filename){
-  console.log('MARGINALIA FOR:', filename);
-  return "MARGINALIA CONTENT";
+module.exports = function(content){
+  return content;
 }

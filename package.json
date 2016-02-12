@@ -9,10 +9,15 @@
   "author": "Mihael Konjevic",
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^0.20.0",
+    "commonmark": "^0.24.0",
     "fs-extra": "^0.26.5",
     "glob": "^7.0.0",
+    "highlight.js": "^9.1.0",
+    "js-beautify": "^1.6.2",
     "lodash": "^4.3.0",
     "mkdirp": "^0.5.1",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "swig": "^1.4.2"
   }
 }

@@ -1,4 +1,52 @@
-module.exports = function(filename){
-  console.log('MARKDOWN FOR:', filename);
-  return "MARKDOWN CONTENT";
+var commonmark = require('commonmark');
+var swig = require('swig');
+var _ = require('lodash');
+var cheerio = require('cheerio');
+var fs = require('fs');
+var hljs = require('highlight.js');
+
+var buildMenu = function(files){
+  // Monstrosity...
+  var reader = new commonmark.Parser();
+  var writer = new commonmark.HtmlRenderer();
+  return _
+    .chain(files)
+    .map(function(f){
+      return f.substr(5);
+    })
+    .filter(function(f){
+      return (f.indexOf('/') === -1 && f.substr(-3) === '.md');
+    })
+    .map(function(f){
+      var parsed = reader.parse(fs.readFileSync('docs/' + f, 'utf-8'));
+      var $ = cheerio.load(writer.render(parsed));
+      return [f.substring(0, f.length - 2) + 'html' , $('h1').text()];
+    })
+    .value();
 }
+
+var highlight = function(html){
+  var $ = cheerio.load(html);
+  $('.language-clojure').each(function(i, node){
+    $(node).html(hljs.highlightAuto($(node).text()).value).addClass('hljs');
+  });
+  return $.html();
+}
+
+
+module.exports = (function(){
+  var menu;
+  return function(content, files, destFilename){
+    if(!menu){
+      menu = buildMenu(files);
+    }
+    var reader = new commonmark.Parser();
+    var writer = new commonmark.HtmlRenderer();
+    var parsed = reader.parse(content);
+    var tpl = swig.compileFile('templates/markdown.html');
+    var rendered =  writer.render(parsed);
+    return tpl({renderedMarkdown: highlight(rendered),
+               menu: menu,
+               destFilename: destFilename});
+  }
+})();
