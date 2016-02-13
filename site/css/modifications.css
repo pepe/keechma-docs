@@ -15,14 +15,21 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: Georgia, sans-serif;
 }
 
-.main-container img {
-    max-width: 80%;
+.main-container .diagram img {
+    max-width: 100%;
     display: block;
-    margin: 0 auto;
+    margin: 20px auto;
+}
+.main-container .diagram--narrow img {
+    max-width: 80%;
 }
 
 .main-container p, .main-container ul, .main-container ol {
     margin-bottom: 1.4em;
+}
+
+.main-container ul ul, .main-container ul ol, .main-container ol ul, .main-container ol ol {
+    margin-bottom: 0;
 }
 
 .main-container h1 {
