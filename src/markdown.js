@@ -9,28 +9,32 @@ var buildMenu = function(files){
   // Monstrosity...
   var reader = new commonmark.Parser();
   var writer = new commonmark.HtmlRenderer();
-  return _
-    .chain(files)
-    .map(function(f){
-      return f.substr(5);
-    })
-    .filter(function(f){
-      return (f.indexOf('/') === -1 && f.substr(-3) === '.md');
-    })
-    .map(function(f){
-      var parsed = reader.parse(fs.readFileSync('docs/' + f, 'utf-8'));
-      var $ = cheerio.load(writer.render(parsed));
-      return [f.substring(0, f.length - 2) + 'html' , $('h1').text()];
-    })
-    .value();
+  var files = _
+      .chain(files)
+      .map(function(f){
+        return f.substr(5);
+      })
+      .filter(function(f){
+        if(f.match(/index/i)){
+          return false;
+        }
+        return (f.indexOf('/') === -1 && f.substr(-3) === '.md');
+      })
+      .map(function(f){
+        var parsed = reader.parse(fs.readFileSync('docs/' + f, 'utf-8'));
+        var $ = cheerio.load(writer.render(parsed));
+        return [f.substring(0, f.length - 2) + 'html' , $('h1').text()];
+      })
+      .value();
+  files.unshift(['index.html', 'Home']);
+  return files;
 }
 
-var highlight = function(html){
-  var $ = cheerio.load(html);
+var highlight = function($){
   $('.language-clojure').each(function(i, node){
     $(node).html(hljs.highlightAuto($(node).text()).value).addClass('hljs');
   });
-  return $.html();
+  return $;
 }
 
 
@@ -45,8 +49,15 @@ module.exports = (function(){
     var parsed = reader.parse(content);
     var tpl = swig.compileFile('templates/markdown.html');
     var rendered =  writer.render(parsed);
-    return tpl({renderedMarkdown: highlight(rendered),
-               menu: menu,
-               destFilename: destFilename});
+
+    var $ = cheerio.load(tpl({renderedMarkdown:rendered,
+                              menu: menu,
+                              destFilename: destFilename}));
+
+    highlight($);
+    if(!destFilename.match(/index/i)){
+      $('#guides-link').addClass('active');
+    }
+    return $.html();
   }
 })();

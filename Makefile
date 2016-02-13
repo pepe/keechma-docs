@@ -15,6 +15,7 @@ clearguides:
 copyguides:
 	mkdir -p docs
 	cp -r ../keechma/guides/* docs
+	cp ../keechma/README.md docs/index.md
 
 buildapidocs:
 	cd ../keechma && lein codox
