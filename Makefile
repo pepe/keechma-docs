@@ -39,3 +39,6 @@ copytodomvcdocs:
 
 build:
 	node index.js
+
+deploy:
+	node deploy.js

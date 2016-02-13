@@ -21,7 +21,7 @@ var handleFile = function(filename, files){
   var ext = path.extname(filename);
   var cleanFilename = filename.substr(5);
   var destFilename;
-  console.log('-- PROCESSING: ' + filename);
+  console.log('-- STARTING: ' + cleanFilename);
   if(handler){
     destFilename = path.join('dest', cleanFilename.replace(ext, '') + '.html');
     return Q.nfcall(fs.readFile, filename, 'utf-8')
@@ -29,31 +29,29 @@ var handleFile = function(filename, files){
       return handler(content, files, cleanFilename.replace(ext, '') + '.html');
     }).then(function(content){
       return Q.nfcall(mkdirp, path.dirname(destFilename)).then(function(){
-        console.log('-- WRITING: ' + destFilename);
+        console.log('++ DONE: ' + cleanFilename);
         return Q.nfcall(fs.writeFile, destFilename, content);
       });
     });
   } else {
     destFilename = path.join('dest', cleanFilename);
     return Q.nfcall(fs.copy, filename, destFilename, {clobber: true}).then(function(){
-      console.log('-- WRITING: ' + destFilename);
+      console.log('++ DONE: ' + cleanFilename);
     });
   }
 }
+
+console.log('STARTING BUILD.');
 
 fs.copy('site', 'dest', function(err){
   if(err){
     throw err;
   }
   glob('docs/**/*.*', {}, function(err, files){
-    console.log('STARTING BUILD!');
     return Q.all(_.map(files, function(f){
       return handleFile(f, files);
     })).done(function(){
-      console.log('DONE!');
+      console.log('BUILD DONE.');
     });
   });
-})
-
-
-
+});
