@@ -11,7 +11,7 @@ var highlight = function($){
 }
 
 module.exports = (function(){
-  var navbar;
+  var navbar, analytics;
   return function(content){
     var $ = cheerio.load(beautifyHtml(content));
 
@@ -33,6 +33,11 @@ module.exports = (function(){
 
     $('pre.deps').wrap('<div class="pre-deps-wrap"></div>');
     $('#api-link').addClass('active');
+    
+    if(!analytics){
+      analytics = fs.readFileSync('templates/analytics.html', 'utf-8');
+    }
+    $('body').append(analytics);
 
     return $.html();
   };

@@ -30,6 +30,14 @@ var buildMenu = function(files){
   return files;
 }
 
+var getTitle = function(menu, destFilename){
+  for(var i = 0; i < menu.length; i++){
+    if(menu[i][0] === destFilename){
+      return menu[i][1];
+    }
+  }
+}
+
 var highlight = function($){
   $('.language-clojure').each(function(i, node){
     $(node).html(hljs.highlightAuto($(node).text()).value).addClass('hljs');
@@ -52,7 +60,8 @@ module.exports = (function(){
 
     var $ = cheerio.load(tpl({renderedMarkdown:rendered,
                               menu: menu,
-                              destFilename: destFilename}));
+                              destFilename: destFilename,
+                              title: getTitle(menu, destFilename)}));
 
     highlight($);
     if(!destFilename.match(/index/i)){

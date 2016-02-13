@@ -4,6 +4,7 @@ var fs = require('fs');
 
 module.exports = (function(){
   var navbar;
+  var analytics;
   return function(content){
     var $ = cheerio.load(content);
     $('td.codes').each(function(i, node){
@@ -27,6 +28,11 @@ module.exports = (function(){
     $('.navbar a').each(function(i, a){
       $(a).attr('href', "../" + $(a).attr('href'));
     });
+
+    if(!analytics){
+      analytics = fs.readFileSync('templates/analytics.html', 'utf-8');
+    }
+    $('body').append(analytics);
 
     return $.html();
   }
