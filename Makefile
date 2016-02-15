@@ -6,6 +6,10 @@ docs: clearguides \
 			copycounterdocs \
 			buildtodomvcdocs \
 			copytodomvcdocs \
+			buildgraphdocs \
+			copygraphdocs \
+			buildlogindocs \
+			copylogindocs \
 			build
 
 clearguides:
@@ -36,6 +40,20 @@ buildtodomvcdocs:
 copytodomvcdocs:
 	mkdir -p docs/annotated
 	cp ../keechma-todomvc/docs/uberdoc.html docs/annotated/todomvc.html
+
+buildgraphdocs:
+	cd ../keechma-graph-data && lein marg
+
+copygraphdocs:
+	mkdir -p docs/annotated
+	cp ../keechma-graph-data/docs/uberdoc.html docs/annotated/graph-data.html
+
+buildlogindocs:
+	cd ../keechma-login && lein marg
+
+copylogindocs:
+	mkdir -p docs/annotated
+	cp ../keechma-login/docs/uberdoc.html docs/annotated/login.html
 
 build:
 	node index.js
