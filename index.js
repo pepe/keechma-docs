@@ -4,6 +4,7 @@ var Q = require('q');
 var fs = require('fs-extra');
 var path = require('path');
 var mkdirp = require('mkdirp');
+var sm = require('sitemap');
 
 var handleMarginalia = require('./src/marginalia.js');
 var handleMarkdown = require('./src/markdown.js');
@@ -15,6 +16,23 @@ var routes = router.expandRouter({
   'api/.*\.html$' : handleApi,
   '.*\.md' : handleMarkdown
 });
+
+var makeSitemap = function(files){
+  var sitemap = sm.createSitemap({
+    hostname: 'http://keechma.com',
+    cacheTime: '84000000',
+  });
+  var processedFiles = _
+    .chain(files)
+    .map(function(f){
+      return f.substr(5);
+    })
+    .value();
+  _.each(processedFiles, function(f){
+    sitemap.add({url: f});
+  });
+  fs.writeFileSync('dest/sitemap.xml', sitemap.toString());
+}
 
 var handleFile = function(filename, files){
   var handler = router.getHandler(routes, filename);
@@ -51,7 +69,10 @@ fs.copy('site', 'dest', function(err){
     return Q.all(_.map(files, function(f){
       return handleFile(f, files);
     })).done(function(){
-      console.log('BUILD DONE.');
+      glob('dest/**/*.html', {}, function(err, files){
+        makeSitemap(files);
+        console.log('BUILD DONE.');
+      });
     });
   });
 });
