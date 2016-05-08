@@ -1,14 +1,65 @@
-<!doctype HTML>
-<html>
-  <head>
-    <title>Keechma - {{ title }}</title>
-    <meta charset="utf-8">
-    <link href="css/site.css" rel="stylesheet">
-    <link href="css/modifications.css" rel="stylesheet">
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% block content %}{% endblock %}
-    {% include "analytics.html" %}
-  </body>
-</html>
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="{{ '/static/gen/styles.css'|url }}">
+<title>Keechma - {% block title %}Welcome{% endblock %}</title>
+<body>
+  {% if this._path == '/' %}
+    {% set short_header = true %}
+  {% endif %}
+  <header {% if short_header %}class="landing-header"{% endif %}>
+    <div class="container{% if fluid %}-fluid{% endif %}">
+      <a class="pull-left" href="/"><img src="/logo.png" id="logo"></a>
+      <ul class="nav-main list-unstyled pull-right">
+        <li>
+          <a {% if this._path == '/' %} class="active"{% endif %}href="{{ '/'|url }}">Home</a>
+        </li>
+        {% for href, title in [
+          ['/news', 'News'],
+          ['/guides', 'Guides'],
+          ['/annotated', 'Examples'],
+          ['/api', 'API Docs']
+          ] %}
+          <li>
+            <a {% if this.is_child_of(href) %} class="active"{% endif %}href="{{ href|url }}">{{ title }}</a>
+          </li>
+        {% endfor %}
+        <li>
+          <a href="https://github.com/keechma/keechma">Source Code</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  {% if this._path == '/' %}
+    <div class="landing-wrap">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            Keechma is a (frontend) micro framework for ClojureScript and Reagent.
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <a href="https://clojars.org/keechma" class="clojars-badge-wrap">
+              <div class="clojars">clojars</div><div class="version">[keechma "0.1.0-SNAPSHOT"]</div>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  {% endif %}
+
+  {% block body %}{% endblock %}
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-929452-11', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+  <script type="text/javascript" id="cookiebanner" src="http://cookiebanner.eu/js/cookiebanner.min.js"></script>
+</body>

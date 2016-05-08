@@ -1,0 +1,115 @@
+_model: api-annotated
+---
+title: API / Keechma 0.1.0-SNAPSHOT
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 current">
+                <a href="/api/keechma/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>keechma</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_app-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>app-state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller-manager">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller-manager</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/keechma/keechma_ui-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>ui-component</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-index" id="content">
+        <h1><span class="project-title"><span class="project-name">Keechma</span> <span class="project-version">0.1.0-SNAPSHOT</span></span></h1>
+        <div class="doc">
+            <p>Frontend micro framework for ClojureScript and Reagent.</p>
+        </div>
+        <h2>Installation</h2>
+        <p>To install, add the following dependency to your project or build file:</p><div class="pre-deps-wrap"><pre class="deps">[keechma &quot;0.1.0-SNAPSHOT&quot;]</pre></div>
+        <h2>Namespaces</h2>
+        <div class="namespace">
+            <h3><a href="keechma_app-state">keechma.app-state</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="keechma_app-state#var-restore-app-db">restore-app-db</a> </li>
+                    <li> <a href="keechma_app-state#var-start.21">start!</a> </li>
+                    <li> <a href="keechma_app-state#var-stop.21">stop!</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="namespace">
+            <h3><a href="keechma_controller">keechma.controller</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="keechma_controller#var-dispatcher">dispatcher</a> </li>
+                    <li> <a href="keechma_controller#var-IController">IController</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="namespace">
+            <h3><a href="keechma_controller-manager">keechma.controller-manager</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="keechma_controller-manager#var-start">start</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="namespace">
+            <h3><a href="keechma_ui-component">keechma.ui-component</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="keechma_ui-component#var--.3EUIComponent">-&gt;UIComponent</a> </li>
+                    <li> <a href="keechma_ui-component#var-constructor">constructor</a> </li>
+                    <li> <a href="keechma_ui-component#var-IUIComponent">IUIComponent</a> </li>
+                    <li> <a href="keechma_ui-component#var-map-.3EUIComponent">map-&gt;UIComponent</a> </li>
+                    <li> <a href="keechma_ui-component#var-resolve-component-dep">resolve-component-dep</a> </li>
+                    <li> <a href="keechma_ui-component#var-resolve-dep">resolve-dep</a> </li>
+                    <li> <a href="keechma_ui-component#var-resolve-subscription-dep">resolve-subscription-dep</a> </li>
+                    <li> <a href="keechma_ui-component#var-system">system</a> </li>
+                    <li> <a href="keechma_ui-component#var-UIComponent">UIComponent</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

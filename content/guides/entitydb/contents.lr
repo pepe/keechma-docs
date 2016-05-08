@@ -1,0 +1,127 @@
+_model: guide
+---
+order: 4
+---
+title: EntityDB
+---
+body:
+
+
+<p>EntityDB is a library that handles storage of any kind of entities in your application. Entity is anything that is &quot;identifiable&quot;. Usually the <code>id</code> attribute is used, but you can use anything that makes sense for your application.</p>
+<h2>Why do you need EntityDB?</h2>
+<p>EntityDB solves two problems for you:</p>
+<ol>
+<li>It allows you to store all entities in a central location</li>
+<li>It ensures data consistency
+<ul>
+<li>If you have the same entity rendered in multiple places (for instance in a master - detail layout) - changes to entity in one place will update the other</li>
+<li>If you have an entity inside some collection, removing it from the EntityDB store will remove it from the collection too</li>
+</ul>
+</li>
+</ol>
+<h2>How does it work?</h2>
+<p>EntityDB functions are implemented in a pure functional way, and they operate on the Clojure <code>map</code>.</p>
+<p>EntityDB supports two ways to store the items:</p>
+<ol>
+<li>In collections</li>
+<li>In named item slots</li>
+</ol>
+<h3>Collections</h3>
+<p>Collections are just lists of items that have name. Whenever you store or retreive the collections you use the collection name.</p>
+<h3>Named items</h3>
+<p>Similar to collections, but they reference just one item.</p>
+<h4>Why do you need to use named collections and named items?</h4>
+<p>Since ClojureScript data structures are immutable, holding a reference to the list of items (or item) will always give you the same value. By using the names, EntityDB can internally update named items and collections when the data changes and ensure the data consistency.</p>
+<hr>
+<p>Before you can store the entities you need to define the schema. Each entity type needs it&apos;s own schema:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}
+             <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:slug</span>}})
+</code></pre>
+<p>With the schema defined, you can store the entities:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v1 {})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;retro&quot;</span>})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v2 (<span class="hljs-name">insert-named-item</span> schema store-v1 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:current</span> user))
+<span class="hljs-comment">;; store the user under the name `:current`</span>
+
+(<span class="hljs-name">get-named-item</span> schema store-v2 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; Returns {:id 1 :username &quot;retro&quot;}</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-collection [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;retro&quot;</span> <span class="hljs-symbol">:likes</span> <span class="hljs-string">&quot;programming&quot;</span>}
+                      {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;neektza&quot;</span> <span class="hljs-symbol">:likes</span> <span class="hljs-string">&quot;wrestling&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v3
+  (<span class="hljs-name">insert-collection</span> schema store-v2 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:list</span> user-collection))
+<span class="hljs-comment">;; Store the user collection. User with the `:id` 1 will be updated</span>
+
+(<span class="hljs-name">get-named-item</span> schema store-v3 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; Returns {:id 1 :username &quot;retro&quot; :likes &quot;programming&quot;}</span>
+</code></pre>
+<p>As you can see the data is kept consistent, without any manual synchronisation.</p>
+<h2>Relations</h2>
+<h3>One to One relations</h3>
+<p>EntityDB can handle simple relations between the entities. Relations are defined in the schema:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}
+             <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:author</span> [<span class="hljs-symbol">:one</span> <span class="hljs-symbol">:users</span>]}}})
+</code></pre>
+<p>EntityDB will now expect a nested <code>author</code> object for each news entity. That object will be unpacked and stored in the <code>users</code> store.</p>
+<p>When you insert the an entity into the EntityDB multiple times, the data will be merged with the previous version. This allows you to write the code that looks like this:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}
+             <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:author</span> [<span class="hljs-symbol">:one</span> <span class="hljs-symbol">:users</span>]}}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v1 {})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> users [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;retro&quot;</span>}
+            {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;mihaelkonjevic&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;First News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>}}
+           {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;Second News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span>}}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v2 (<span class="hljs-name">insert-collection</span> schema store-v1 <span class="hljs-symbol">:news</span> <span class="hljs-symbol">:list</span> news))
+<span class="hljs-comment">;; Insert news into the store</span>
+
+(<span class="hljs-name">get-item-by-id</span> schema store-v2 <span class="hljs-symbol">:users</span> <span class="hljs-number">1</span>)
+<span class="hljs-comment">;; Returns {:id 1}</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v3 (<span class="hljs-name">insert-collection</span> schema store-v2 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:list</span> users))
+<span class="hljs-comment">;; Insert users into the store</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news-1 (<span class="hljs-name">get-item-by-id</span> schema store-v3 <span class="hljs-symbol">:news</span> <span class="hljs-number">1</span>))
+<span class="hljs-comment">;; Returns {:id 1 :title &quot;First News&quot; :author (fn [])}</span>
+
+((<span class="hljs-symbol">:author</span> news-1))
+<span class="hljs-comment">;; Returns {:id 1 :username &quot;retro&quot;}</span>
+</code></pre>
+<p>When you access the nested relation stored in EntityDB, it will be wrapped inside the function. This ensures that circular relations can be resolved.</p>
+<h3>One to Many relations</h3>
+<p>EntityDB supports one to many relations too:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>
+                     <span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:news</span> [<span class="hljs-symbol">:many</span> <span class="hljs-symbol">:news</span>]}}
+             <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>
+                    <span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:author</span> [<span class="hljs-symbol">:one</span> <span class="hljs-symbol">:users</span>]}}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v1 {})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;retro&quot;</span> <span class="hljs-symbol">:news</span> [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span>}]})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;First News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>}}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v2 (<span class="hljs-name">insert-named-item</span> schema store-v1 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:current</span> user))
+<span class="hljs-comment">;; Inserts user into the store</span>
+
+(<span class="hljs-name">get-item-by-id</span> schema store-v2 <span class="hljs-symbol">:news</span> <span class="hljs-number">1</span>)
+<span class="hljs-comment">;; Returns {:id 1}</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v3 (<span class="hljs-name">insert-collection</span> schema store-v2 <span class="hljs-symbol">:news</span> <span class="hljs-symbol">:list</span> news))
+<span class="hljs-comment">;; Inserts news into the store</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-1 (<span class="hljs-name">get-item-by-id</span> schema store-v3 <span class="hljs-symbol">:users</span> <span class="hljs-number">1</span>))
+<span class="hljs-comment">;; Returns {:id 1 :username &quot;retro&quot; :news (fn[])}</span>
+
+((<span class="hljs-symbol">:news</span> user-1))
+<span class="hljs-comment">;; Returns [{:id 1 :title &quot;First News&quot; :author (fn[])}]</span>
+</code></pre>
+<hr>
+<p>Relations support in EntityDB provides you with an effortless way to keep your data consistent.</p>
+<p>Read the EntityDB <a href="api/keechma.edb.html">API docs</a>.</p>

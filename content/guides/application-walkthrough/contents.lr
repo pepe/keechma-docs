@@ -1,0 +1,352 @@
+_model: guide
+---
+order: 7
+---
+title: Application Walkthrough
+---
+body:
+
+
+<p>Application I&apos;ll be using as an example can be found on <a href="http://github.com/keechma/keechma-place-my-order">Github</a>. It is a ClojureScript rewrite of the <a href="http://place-my-order.com">DoneJS app</a> that is covered in the <a href="http://donejs.com/place-my-order.html">DoneJS Guides</a>.</p>
+<p>I picked this as an example app for three reasons:</p>
+<ol>
+<li>I have previous experience with DoneJS</li>
+<li>It&apos;s an app that was created to showcase a different framework, so it was interesting to see how the ideas behind the frameworks differ</li>
+<li>Place-my-order app implements the backend code (including the WebSockets) which allowed me to focus on frontend code only</li>
+</ol>
+<p>I want to point out that DoneJS implementation has more functionality (like server side rendering), and is implemented in a very different way. If you&apos;re doing JavaScript development, definitely check it out, it&apos;s pretty interesting.</p>
+<h2>Let&apos;s start</h2>
+<p>Place-my-order app is a minimal implementation of the restaurant ordering service.</p>
+<p>Before we start I recommend you to either install the application locally (you can find the instructions <a href="https://github.com/keechma/keechma-place-my-order">here</a>) or go to http://place-my-order.com and click around to get the feeling of how the application works.</p>
+<h3>High level architecture overview</h3>
+<p>Here is the list of requirements for the app:</p>
+<ol>
+<li>Landing page is static and shows the intro text and an image</li>
+<li>Restaurants page:
+<ol>
+<li>When user loads the restaurant page it shows two select elements
+<ul>
+<li>State select box should show a list of states</li>
+<li>City select box is populated based on the selected state</li>
+</ul>
+</li>
+<li>When user selects the state and the city it should load the list of restaurants</li>
+<li>When user clicks on the &quot;Place my order&quot; button it should show the restaurant landing page</li>
+<li>When user clicks on the &quot;Order from this restaurant&quot; button it should show the order form
+<ol>
+<li>Order form has two tabs: &quot;Lunch menu&quot; and &quot;Dinner menu&quot;</li>
+<li>Each tab has a list of meals</li>
+<li>Toggling the meal should update the order total</li>
+</ol>
+</li>
+<li>When user places the order it is saved and user can place another order</li>
+</ol>
+</li>
+<li>Order history page
+<ol>
+<li>Order history page shows all placed orders</li>
+<li>Users can change the order status (<code>new -&gt; preparing -&gt; delivery -&gt; delivered</code>)</li>
+<li>Order history should be synchronised on all open pages through WebSockets</li>
+</ol>
+</li>
+</ol>
+<h3>Routes</h3>
+<p>Translating the requirements to routes gives us the following:</p>
+<ul>
+<li><code>/</code> - Landing page</li>
+<li><code>/restaurants</code> - restaurants page with filtering</li>
+<li><code>/restaurants/:restaurant-slug</code> - restaurant landing page</li>
+<li><code>/restaurants/:restaurant-slug/order</code> - restaurant ordering page</li>
+<li><code>/order-history</code> - order history page</li>
+</ul>
+<p>Routes are the central place in Keechma apps, and they are treated as a minimal representation of the application state. Based on the route we know what data needs to be loaded when user lands on that route:</p>
+<ul>
+<li><code>/</code> - Nothing, landing page is static</li>
+<li><code>/restaurants</code> - list of US states, everything else is incrementally loaded based on user&apos;s actions</li>
+<li><code>/restaurants/:restaurant-slug</code> - restaurant entity, based on the <code>restaurant-slug</code></li>
+<li><code>/restaurants/:restaurant-slug/order</code> - restaurant entity, based on the <code>restaurant-slug</code></li>
+<li><code>/order-history</code> - Order history list</li>
+</ul>
+<p>This way of thinking allows us to enforce strict top - down data flow. UI components never request any data, it is provided to them by controllers, based on the route params.</p>
+<h3>Controllers</h3>
+<p>Controllers in Keechma apps have the following purposes:</p>
+<ul>
+<li>Mutate app state based on the route</li>
+<li>React to user actions by listening to commands sent from the UI</li>
+<li>React to any other commands (for instance WebSocket messages)</li>
+</ul>
+<p>Controllers communicate with outer world through channels, and are the only place in the application where you can mutate the application state.</p>
+<p>Place-my-order app is implemented with five controllers:</p>
+<ol>
+<li>Restaurants controller
+<ul>
+<li>Loads the states list</li>
+<li>Based on user selection loads the cities list (for the selected state)</li>
+<li>Based on user selection loads the restaurants list (for the selected city)</li>
+</ul>
+</li>
+<li>Restaurant controller
+<ul>
+<li>Loads the selected restaurant</li>
+</ul>
+</li>
+<li>Order controller
+<ul>
+<li>Manages the order creation</li>
+<li>Manages the order status change (<code>new -&gt; preparing -&gt; delivery -&gt; delivered</code>)</li>
+<li>Manages order deletion</li>
+</ul>
+</li>
+<li>Order history controller
+<ul>
+<li>Loads the order history</li>
+</ul>
+</li>
+<li>Vacuum controller - I&apos;ll talk about this at the end of this article</li>
+</ol>
+<p>There can be multiple controllers running for each route, each one of them managing a subset of the app state.</p>
+<p>For instance, order controller is active both on the route <code>/restaurants/:restaurant-slug/order</code> and on the route <code>/order-history</code>. I&apos;ll talk more about it later in the article.</p>
+<h3>EntityDB</h3>
+<p>Purpose of the entity database is to give you a place where you can store the entity data. Anything that has some kind of identity (for instance the <code>id</code> column) should be managed by the EntityDB.</p>
+<p>It can also handle relations between entities, but this is out of the scope of this article.</p>
+<p>EntityDB is set up in the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/edb.cljs"><code>client/src/edb.cljs</code></a> file but we only care about lines 4 - 8. Rest of the file is syntactic sugar that allows a bit nicer API to app state mutation.</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> dbal (<span class="hljs-name">edb/make-dbal</span> {<span class="hljs-symbol">:states</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:short</span>}
+                          <span class="hljs-symbol">:cities</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:name</span>}
+                          <span class="hljs-symbol">:restaurants</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:slug</span>}
+                          <span class="hljs-symbol">:orders</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:_id</span>}}))
+</code></pre>
+<p>This defines the structure of the entity database, it has four stores - states, cities, restaurants and orders, and we define the identity function for each of them.</p>
+<h3>UI components</h3>
+<p>Keechma is designed to work with Reagent, and the fact that Reagent components are implemented as functions gives us some interesting possibilities.</p>
+<p>When developing frontend applications (in most cases) there are two options:</p>
+<ul>
+<li>Each component can get its data from the parent</li>
+<li>Each component depends on some global store and gets its data from there</li>
+</ul>
+<p>Both of these have their own problems, but Keechma takes the middle road. Each component gets the data injected from the outside, but without global dependencies. The way it works is the following:</p>
+<ol>
+<li>Each component defines the component record which lists the component dependencies, both for data and for the children component it renders</li>
+<li>When application is started each component&apos;s renderer function (which is a Reagent component) is partially applied with the context that can be used to resolve data and children components.</li>
+</ol>
+<p>This allows us to define components that are completely decoupled from the rest of the system. They don&apos;t care about the data they render or about the children components they might use to render that data.</p>
+<p>For example, this is the restaurants list component:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-restaurant [ctx restaurant]
+  [<span class="hljs-symbol">:div.restaurant</span> {<span class="hljs-symbol">:key</span> (<span class="hljs-symbol">:slug</span> restaurant)}
+   [<span class="hljs-symbol">:img</span> {<span class="hljs-symbol">:src</span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> restaurant [<span class="hljs-symbol">:images</span> <span class="hljs-symbol">:thumbnail</span>])}]
+   [<span class="hljs-symbol">:h3</span> (<span class="hljs-symbol">:name</span> restaurant)]
+   (<span class="hljs-name">render-address</span> (<span class="hljs-symbol">:address</span> restaurant))
+   (<span class="hljs-name">render-hours</span>)
+   [<span class="hljs-symbol">:a.btn</span> {<span class="hljs-symbol">:href</span> (<span class="hljs-name">ui/url</span> ctx {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;restaurants&quot;</span> <span class="hljs-symbol">:slug</span> (<span class="hljs-symbol">:slug</span> restaurant)})}
+    <span class="hljs-string">&quot;Place My Order&quot;</span>]
+   [<span class="hljs-symbol">:br</span>]])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [restaurants-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:restaurants</span>)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+      (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [restaurants @restaurants-sub
+            restaurants-meta (<span class="hljs-name"><span class="hljs-builtin-name">meta</span></span> restaurants)]
+        [<span class="hljs-symbol">:div.restaurants</span>
+         [<span class="hljs-symbol">:h2.page-header</span> <span class="hljs-string">&quot;Restaurants&quot;</span>]
+         [<span class="hljs-symbol">:form.form</span>
+          [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:states</span>)]
+          [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:cities</span>)]]
+         (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-symbol">:is-loading?</span> restaurants-meta)
+           [<span class="hljs-symbol">:div.restaurants.loading</span>]
+           (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">partial</span></span> render-restaurant ctx) restaurants))]))))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> component (<span class="hljs-name">ui/constructor</span>
+                {<span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:restaurants</span>]
+                 <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:cities</span> <span class="hljs-symbol">:states</span>]
+                 <span class="hljs-symbol">:renderer</span> render}))
+</code></pre>
+<p>This component manages the entire workflow of the restaurant selection:</p>
+<ul>
+<li>It renders the <code>states</code> select element</li>
+<li>It renders the <code>cities</code> select element</li>
+<li>It renders the list of restaurants</li>
+</ul>
+<p>Notice that it resolves <code>states</code> and <code>cities</code> components from the context:</p>
+<pre><code class="language-clojure hljs">[(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:states</span>)]
+[(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:cities</span>)]
+</code></pre>
+<p>It never passes any data to them, they have their own context partially applied and know how to render themselves based on the current app state.</p>
+<p>This way <code>restaurants-list</code> component is reusable from the start, we can easily replace components that are used to select the state or the city by remapping the dependencies.</p>
+<h4>UI system</h4>
+<p>Components are composed to systems. In place-my-order app this happens in the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/component_system.cljs"><code>src/client/component_system.cljs</code></a> file:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> client.component-system
+  (<span class="hljs-symbol">:require</span> [client.components.app <span class="hljs-symbol">:as</span> app]
+            [client.components.landing <span class="hljs-symbol">:as</span> landing]
+            [client.components.restaurant-list <span class="hljs-symbol">:as</span> restaurant-list]
+            [client.components.restaurant-detail <span class="hljs-symbol">:as</span> restaurant-detail]
+            [client.components.cities <span class="hljs-symbol">:as</span> cities]
+            [client.components.states <span class="hljs-symbol">:as</span> states]
+            [client.components.order <span class="hljs-symbol">:as</span> order]
+            [client.components.order-form <span class="hljs-symbol">:as</span> order-form]
+            [client.components.order-report <span class="hljs-symbol">:as</span> order-report]
+            [client.components.order-history <span class="hljs-symbol">:as</span> order-history]
+            [client.components.order-list-item <span class="hljs-symbol">:as</span> order-list-item]))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> system
+   {<span class="hljs-symbol">:main</span> app/component
+    <span class="hljs-symbol">:landing</span> landing/component
+    <span class="hljs-symbol">:cities</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> cities/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:restaurants</span>)
+    <span class="hljs-symbol">:states</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> states/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:restaurants</span>)
+    <span class="hljs-symbol">:restaurant-list</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> restaurant-list/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:restaurants</span>)
+    <span class="hljs-symbol">:restaurant-detail</span> restaurant-detail/component
+    <span class="hljs-symbol">:order</span> order/component
+    <span class="hljs-symbol">:order-report</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> order-report/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:order</span>)
+    <span class="hljs-symbol">:order-form</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> order-form/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:order</span>)
+    <span class="hljs-symbol">:order-list-item</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> order-list-item/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:order</span>)
+    <span class="hljs-symbol">:order-history</span> order-history/component})
+</code></pre>
+<p>All we have to do is to require all components and map them to their keys in the <code>system</code> map. When starting the app Keechma will resolve the dependencies (using the excellent <a href="https://github.com/stuartsierra/dependency"><code>dependency</code></a> library by Stuart Sierra) and partially apply them to each component.</p>
+<p>In place-my-order app there is no need for it, but you could manually override some of the dependencies and automatically resolve the rest.</p>
+<p>You might notice that some components have <code>:topic</code> assoc-ed to them. This tells component on which topic it should send commands. Topic is the key that you used to register the controller (more about that later).</p>
+<h3>Subscriptions</h3>
+<p>Subscriptions in Keechma work similar to Re/Frame&apos;s subscriptions.</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> client.subscriptions
+  (<span class="hljs-symbol">:require</span> [client.edb <span class="hljs-symbol">:as</span> edb])
+  (<span class="hljs-symbol">:require-macros</span> [reagent.ratom <span class="hljs-symbol">:refer</span> [reaction]]))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> states [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-collection</span> @app-db <span class="hljs-symbol">:states</span> <span class="hljs-symbol">:list</span>)))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> cities [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-collection</span> @app-db <span class="hljs-symbol">:cities</span> <span class="hljs-symbol">:list</span>)))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restaurants [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-collection</span> @app-db <span class="hljs-symbol">:restaurants</span> <span class="hljs-symbol">:list</span>)))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> current-restaurant [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [slug (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @app-db [<span class="hljs-symbol">:route</span> <span class="hljs-symbol">:data</span> <span class="hljs-symbol">:slug</span>])]
+     (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> slug
+       (<span class="hljs-name">edb/get-item-by-id</span> @app-db <span class="hljs-symbol">:restaurants</span> slug)))))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> current-order [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-named-item</span> @app-db <span class="hljs-symbol">:orders</span> <span class="hljs-symbol">:current</span>)))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> order-history [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-collection</span> @app-db <span class="hljs-symbol">:orders</span> <span class="hljs-symbol">:history</span>)))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> all {<span class="hljs-symbol">:states</span> states
+          <span class="hljs-symbol">:cities</span> cities
+          <span class="hljs-symbol">:restaurants</span> restaurants
+          <span class="hljs-symbol">:current-restaurant</span> current-restaurant
+          <span class="hljs-symbol">:current-order</span> current-order
+          <span class="hljs-symbol">:order-history</span> order-history})
+</code></pre>
+<p>Each subscription is a function that takes app state atom as argument and returns the subset of data from the app state.</p>
+<h3>Defining the app</h3>
+<p>You can find the app definition in the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/app.cljs"><code>src/client/app.cljs</code></a>. The <code>definition</code> map holds the following information:</p>
+<ul>
+<li>Which route patterns are used</li>
+<li>Which controllers are used in the app</li>
+<li>What element to use to mount the app</li>
+<li>What components are used in the app</li>
+<li>What subscriptions are available in the app</li>
+</ul>
+<p>This is a place where all of the decoupled parts come together. Controllers are passed in as a map:</p>
+<pre><code class="language-clojure hljs">{
+    ...
+    <span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:restaurants</span> (<span class="hljs-name">c-restaurants/-&gt;Controller</span>)
+                  <span class="hljs-symbol">:restaurant</span> (<span class="hljs-name">c-restaurant/-&gt;Controller</span>)
+                  <span class="hljs-symbol">:order</span> (<span class="hljs-name">c-order/-&gt;Controller</span>)
+                  <span class="hljs-symbol">:order-history</span> (<span class="hljs-name">c-order-history/-&gt;Controller</span>)
+                  <span class="hljs-symbol">:vacuum</span> (<span class="hljs-name">c-vacuum/-&gt;Controller</span>)}
+    ...
+}
+</code></pre>
+<p>Keys in the <code>:controllers</code> map are topics on which each controller listens to commands. Those are the same topics that were assoc-ed to the components in the component system file.</p>
+<h2>App functionality</h2>
+<p>The previous part was a high level overview of the application. In the next part I&apos;ll go through each functionality and show you how it was implemented.</p>
+<h3>Landing page (<code>/</code>)</h3>
+<p>Landing page is static, it only shows the text and the image, so it&apos;s just rendered in the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/landing.cljs"><code>src/client/components/landing.cljs</code></a> component.</p>
+<h3>Restaurants page (<code>/restaurants</code>)</h3>
+<p>Restaurants page is managed by the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/restaurants.cljs"><code>src/client/controllers/restaurants.cljs</code></a> controller.</p>
+<p>The controller file has a bunch of comments which explain what&apos;s going on. I recommend you to read them before you continue.</p>
+<p>The restaurants controller does the following:</p>
+<ul>
+<li>Loads the <code>states</code> list</li>
+<li>Waits on the user command to load the <code>cities</code> list (when user selects the state)</li>
+<li>Waits on the user command to load the <code>restaurants</code> list (when user selects the city)</li>
+</ul>
+<p>The components used to render this page are:</p>
+<ul>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/restaurant_list.cljs"><code>src/client/components/restaurant_list.cljs</code></a> - Main component, renders the <code>states</code> and <code>cities</code> components, renders the list of restaurants</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/states.cljs"><code>src/client/components/states.cljs</code></a> - Renders the select state component, when the user selects the state it sends the <code>select-state</code> command to the controller</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/cities.cljs"><code>src/client/components/cities</code></a> - Renders the select city component, when the user selects the state it sends the <code>select-city</code> command to the controller</li>
+</ul>
+<p>Each rendered restaurant will have the &quot;Place my order&quot; link which will take us to the <code>/restaurants/:slug</code> page where we&apos;ll render the restaurant landing page.</p>
+<h3>Restaurant landing page (<code>/restaurants/:slug</code>)</h3>
+<p>Restaurants page is managed by the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/restaurant.cljs"><code>src/client/controllers/restaurant.cljs</code></a> controller.</p>
+<p>The controller file has a bunch of comments which explain what&apos;s going on. I recommend you to read them before you continue.</p>
+<p>Only thing that the <code>restaurant</code> controller does is loading of the restaurant based on the slug.</p>
+<p>It is rendered by the <a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/restaurant_detail.cljs"><code>src/client/components/restaurant_detail.cljs</code></a> component.</p>
+<p>On the page there will be a link that will take us to the restaurant order page.</p>
+<h3>Restaurant order page (<code>/restaurants/:slug/order</code>)</h3>
+<p>The restaurant order page is managed by two controllers:</p>
+<ol>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/restaurant.cljs"><code>src/client/controllers/restaurant.cljs</code></a> controller</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/order.cljs"><code>src/client/controllers/order.cljs</code></a> controller</li>
+</ol>
+<p>Both controller files have bunch of comments which explain what&apos;s going on. I recommend you to read them before you continue.</p>
+<p>The restaurant controller is responsible for loading of the restaurant information, and the order controller manages the creation of new order.</p>
+<p>The components used to render this page are:</p>
+<ul>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/order.cljs"><code>src/client/components/order.cljs</code></a> - this component will render the <code>order_form</code> or <code>order_report</code> component based on the existence of the <code>current_order</code></li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/order_form.cljs"><code>src/client/components/order_form.cljs</code></a> - this component renders the order form:
+<ul>
+<li>It will render the tabbed menu list (Lunch menu and Dinner menu)</li>
+<li>It will collect the order data in it&apos;s local state</li>
+<li>When the user clicks the &quot;Place my order!&quot; button it will validate the form data and send the <code>save-order</code> command to the controller</li>
+</ul>
+</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/order_report.cljs"><code>src/client/components/order_report.cljs</code></a> - this component renders the details of the <code>current_order</code>. If user clicks on the &quot;Place another order!&quot; link, it will send the <code>clear-order</code> command which will cause the current order to be cleared from the app state, so the <code>order_form</code> component will be rendered again.</li>
+</ul>
+<h3>Order history page (<code>/order-history</code>)</h3>
+<p>The order history page is managed by two controllers:</p>
+<ol>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/order_history.cljs"><code>src/client/controllers/order_history.cljs</code></a> controller</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/controllers/order.cljs"><code>src/client/controllers/order.cljs</code></a> controller</li>
+</ol>
+<p>Both controller files have bunch of comments which explain what&apos;s going on. I recommend you to read them before you continue.</p>
+<p>The order history controller is responsible for loading of the order history, and the order controller manages the <code>status</code> change for each of the rendered orders.</p>
+<p>The components used to render this page are:</p>
+<ul>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/order_history.cljs"><code>src/client/components/order_history.cljs</code></a> - this component partitions the order history list based on the order status. It also renders all of the orders with the <code>order_list_item</code> component.</li>
+<li><a href="https://github.com/keechma/keechma-place-my-order/blob/master/client/src/client/components/order_list_item.cljs"><code>src/client/components/order_list_item.cljs</code></a> - this component renders one order. It will also send the <code>mark-order</code> or <code>delete-order</code> command to the <code>order</code> controller based on the user actions.</li>
+</ul>
+<h2>Vacuuming the entity db</h2>
+<p>I&apos;ve mentioned the <code>vacuum</code> controller previously. The purpose of this controller is to ensure that the entity db holds only the data that is needed to render the current page.</p>
+<p>When you have a single page app, it is easy to accumulate bunch of garbage in your app state db. This problem is even worse when you use the Keechma&apos;s EntityDB.</p>
+<h3>How EntityDB works</h3>
+<p>EntityDB ensures that when you render an entity multiple times on the page, you always get the same object. This way if you change the entity in one place, it is automatically updated anywhere that entity is rendered. You don&apos;t have to do any synchronization, everything is taken care of automatically.</p>
+<p>This is a feature I&apos;ve used for years in <a href="http://canjs.com">CanJS</a>, it&apos;s extremely convinient and it allows you to avoid whole class of bugs related to the data synchronization.</p>
+<p>In CanJS it works in the following way:</p>
+<ul>
+<li>When the model instance is loaded from the server it&apos;s placed in the global store</li>
+<li>Each time this model instance is rendered in the page, CanJS increments the reference count for that model instance</li>
+<li>If that same model instance is loaded from some other place, the data will be merged with the one in the global store, and the same object will be returned</li>
+<li>When the user updates the model instance, it is mutated in place and changes are applied everywhere that model instance was rendered.</li>
+<li>When the DOM changes, and the model instance is removed from the screen, CanJS decrements the reference count for that model instance</li>
+<li>When the reference count is zero, item is removed from the global store</li>
+</ul>
+<p>This works for CanJS because it uses the mutable data structures, and because CanJS controls the whole stack, from models to the rendering.</p>
+<p>In ClojureScript, we can&apos;t do that. ClojureScript data structures are immutable, so we can&apos;t hold the reference to the entity. Also, Reagent (and React) don&apos;t do any book keeping when the item is rendered on the page.</p>
+<p>EntityDB solves this problem in the following way:</p>
+<ul>
+<li>You must give names to your collections or items, this way you can load the items by the name from your subscriptions</li>
+<li>When you call <code>edb/insert-collection</code> or <code>edb/insert-named-item</code> it will put the entity in the store, and replace items in the collection or in the named item with the <code>id</code> of that item</li>
+<li>When you call <code>edb/get-collection</code> or <code>edb/get-named-item</code> it will return whatever is in the global store based on the <code>id</code>.</li>
+</ul>
+<p>All of this happens under the hood, and we can still use the nice API to interact with the EntityDB, but it comes with a cost: When you call <code>edb/remove-collection</code> or <code>edb/remove-named-item</code> it doesn&apos;t really remove anything from the store, it just removes those collections or named items. It works in this way because each item in the store can exist in multiple collections or named items.</p>
+<p>That&apos;s why the EntityDB implements the <code>vacuum</code> function. This function will go through all stores, and remove items that are not referenced in any collections or named items.</p>
+<p>Since Keechma knows what data is needed based on the route, the vacuum controller can clean the database on each route and remove the obsolete items.</p>
+<h2>Conclusion</h2>
+<p>Keechma is a small framework, but I believe it brings a lot of value to the development. I believe that the problems it solves are the problems that each developer encounters while developing single page apps. Even if you don&apos;t end up using Keechma, I hope you got some ideas how to approach these problems and solve them.</p>

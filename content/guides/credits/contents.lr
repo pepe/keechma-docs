@@ -1,0 +1,22 @@
+_model: guide
+---
+order: 99
+---
+title: Credits
+---
+body:
+
+
+<p>Documentation was generated using the following libraries:</p>
+<ul>
+<li>API documentation: <a href="https://github.com/weavejester/codox">Codox</a></li>
+<li>Annotated source code: <a href="https://github.com/gdeer81/marginalia/">Marginalia</a>, specifically the <a href="https://github.com/MichaelBlume/marginalia">fork made by Michael Blume</a></li>
+</ul>
+<p>The generated files are then post processed with the Keechma&apos;s documentation builder to ensure that all pages look the same.</p>
+<h2>Icons</h2>
+<p>Icons used in the documentation illustrations are the following:</p>
+<ul>
+<li><a href="https://thenounproject.com/icon/57517/">Video Game Controller: Alex Berkowitz</a></li>
+<li><a href="https://thenounproject.com/icon/310830/">Database: Creative Stall</a></li>
+<li><a href="https://thenounproject.com/icon/180636/">Up: Sergey Demushkin</a></li>
+</ul>

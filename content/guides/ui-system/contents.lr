@@ -1,0 +1,122 @@
+_model: guide
+---
+order: 5
+---
+title: UI System
+---
+body:
+
+
+<p>Keechma provides you with a way to write decoupled, reusable UI components. It&apos;s still using Reagent to implement and render the components, but adds some structure around it to keep the things clean.</p>
+<h2>Untangling the UI</h2>
+<p>UI is the messiest part of the frontend application development. By default, the components are coupled to the application state, (sometimes) to their parent components and (almost always) to their child components.</p>
+<blockquote>
+<p>Most of our components take the entire app state as their data. Parent components don&#x2019;t pass their children subcursors with just the bits they care about, they pass them the whole enchilada. Then we have a slew of paths defined in vars, which we use to extract the data we want. It&#x2019;s not ideal. But it&#x2019;s what we&#x2019;ve had to do.</p>
+<p>From the <a href="http://blog.circleci.com/why-we-use-om-and-why-were-excited-for-om-next/">Why We Use Om, and Why We&#x2019;re Excited for Om Next</a> blog post</p>
+</blockquote>
+<p>Keechma allows you to decouple the UI components without falling into one of the traps:</p>
+<ul>
+<li>Passing data from the parent to the child componets
+<ul>
+<li>it gets hard to mantain</li>
+<li>moving components around is hard</li>
+<li>each component must know everything about any component below it</li>
+</ul>
+</li>
+<li>Global dependence on the application state
+<ul>
+<li>no way to reuse the components</li>
+<li>testing is hard</li>
+</ul>
+</li>
+</ul>
+<p>To achieve that, you&apos;ll need to write slighly more code but it pays off in the end. Let&apos;s say that you have a component that renders the list of users. That component is rendered inside the <code>user-page</code> component which is rendered inside the <code>layout</code> component.</p>
+<p>Neither the <code>user-page</code> or the <code>layout</code> component care about the data that the <code>user-list</code> component needs. User component declares it&apos;s dependencies in a Clojure record, and when it&apos;s rendered it will get it&apos;s dependencies injected from the application.</p>
+<p>The problem with this approach is that when you have a component that works like that, parent component has to be able to render the <code>user-list</code> component with the correct context. This means that the <code>user-page</code> can&apos;t just require the component. It needs to declare it&apos;s dependency on the <code>user-list</code> component which will allow it to render the correct <strong>version</strong> of the <code>user-list</code> component.</p>
+<p>That&apos;s why Keechma implements the UI systems. UI systems allow components to get the right component and data dependencies injected in.</p>
+<h3>Data dependencies</h3>
+<p>Components declare dependencies on <code>subscriptions</code>. Subscriptions are functions that get the <code>app-state</code> atom passed in and return the subset of the data (They are almost identical to the <a href="https://github.com/Day8/re-frame#subscribe">Re/Frame&apos;s subscriptions</a> although they are not global).</p>
+<hr>
+<p>To reiterate, each component needs to declare dependencies on the data it needs to render, and on the child components it needs to render - unless you&apos;re using pure components that have no dependencies, they can be required.</p>
+<p>Example:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-table-renderer [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [user-list (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:user-list</span>)]
+      <span class="hljs-comment">;; Get the user list subscription, it will be injected from the outside</span>
+      [<span class="hljs-symbol">:table</span>
+        (<span class="hljs-name"><span class="hljs-builtin-name">for</span></span> [user @user-list]
+          ... render user ...)])))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-table-component
+  (<span class="hljs-name">ui/constructor</span>
+    {<span class="hljs-symbol">:renderer</span> user-list-renderer
+     <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:user-list</span>]}))
+     <span class="hljs-comment">;; Declare that this component is dependent on the `:user-list` subscription</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-page-renderer [ctx]
+  [<span class="hljs-symbol">:div</span>
+    (<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:user-table</span>)])
+    <span class="hljs-comment">;; Get the correctly bound `user-table` component, it will be injected from the outside</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-page-component [ctx]
+  (<span class="hljs-name">ui/constructor</span>
+    {<span class="hljs-symbol">:renderer</span> user-page-renderer
+     <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:user-table</span>]}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> layout-renderer [ctx]
+  [<span class="hljs-symbol">:div</span>
+    (<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:user-page</span>)])
+    <span class="hljs-comment">;; Get the correctly bound `user-page` component, that knows how to render the user list. It will be injected from the outside</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> layout-component
+  (<span class="hljs-name">ui/constructor</span>
+    {<span class="hljs-symbol">:renderer</span> layout-renderer
+     <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:user-page</span>]}))
+    
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> system
+  (<span class="hljs-name">ui/system</span>
+    {<span class="hljs-symbol">:main</span> layout-component <span class="hljs-comment">;; system must have the `:main` component defined</span>
+     <span class="hljs-symbol">:user-page</span> user-page-component
+     <span class="hljs-symbol">:user-table</span> user-table-component}
+    {<span class="hljs-symbol">:user-list</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [app-state])})) <span class="hljs-comment">;; this will be injected to the `user-table` component as the `:user-list` subscription</span>
+<span class="hljs-comment">;; returns the bound `:main` component which can be mounted in the page</span>
+
+(<span class="hljs-name">reagent/render-component</span> [system] dom-element)
+</code></pre>
+<p>There you have it, a completely decoupled UI system. The tradeoff is that you must explicitly declare dependencies for each component.</p>
+<p>This way of building UI components has some other advantages too. For instance if later you build an alternative <code>user-list</code> component, that is rendering the user list differently, the only place where you must update the code is where you define the system:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">system</span></span>
+  (ui/system
+    {<span class="hljs-symbol">:main</span> layout-component ;; system must have the `<span class="hljs-symbol">:main`</span> component <span class="hljs-keyword">defined</span>
+     <span class="hljs-symbol">:user-page</span> user-page-component
+     <span class="hljs-symbol">:user-table</span> my-super-awesome-user-component}))
+;; returns the bound `<span class="hljs-symbol">:main`</span> component which can be mounted <span class="hljs-keyword">in</span> the page
+</code></pre>
+<p>Both the <code>layout</code> and the <code>user-page</code> component will continue to work the same.</p>
+<h3>Composing systems</h3>
+<p>Another advantage is that you can compose UI systems. If you had a big app with a lot of different areas, each area could be a system on it&apos;s own:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-page-system
+  (<span class="hljs-name">ui/system</span> {...}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news-page-system
+  (<span class="hljs-name">ui/system</span> {...}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> main-app-system
+  (<span class="hljs-name">ui/system</span>
+    {<span class="hljs-symbol">:user-page</span> user-page-system
+     <span class="hljs-symbol">:news-page</span> news-page-system}))
+</code></pre>
+<p>This allows you to easily scale your application, without ever building an unamanageable monolith.</p>
+<h3>Manual dependency resolving</h3>
+<p>Let&apos;s say you have a generalized grid component, and you use it in a few places in your project, news list and user list. With Keechma it&apos;s trivial to create two versions of this component, each mapped to it&apos;s own dependencies:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> system 
+  (<span class="hljs-name">ui/system</span>
+    {<span class="hljs-symbol">:user-grid</span> (<span class="hljs-name">ui-component/resolve-subscription-dep</span> 
+                  grid-component <span class="hljs-symbol">:list</span> user-list)
+     <span class="hljs-symbol">:news-grid</span> (<span class="hljs-name">ui-component/resolve-subscription-dep</span> 
+                  grid-component <span class="hljs-symbol">:list</span> news-list))})
+</code></pre>
+<p>When you manually resolve dependencies, all unresolved dependencies will still be automatically resolved.</p>
+<hr>
+<p>UI system in Keechma allows you to write applications that encourage reuse of UI components, and by organizing them into sub-systems we can achieve code base scalability. You can also avoid the need to split your apps into smart and dumb components. All components are dumb and isolated, they get everything injected from the outside.</p>
+<p>Read the UI system <a href="api/keechma.ui-component.html">API docs</a>.</p>

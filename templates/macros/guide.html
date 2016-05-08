@@ -1,0 +1,36 @@
+{% macro render_guides_menu(page) %}
+  {% if page._model == 'guides-index' %}
+    {% set index = page %}
+  {% else %}
+    {% set index = page.parent %}
+  {% endif %}
+  <div class="list-group guides-menu">
+    <a class="list-group-item {% if page == index %}active{% endif %}" href="{{ index|url }}">
+      {{ index.title }}
+    </a>
+    {% for c in index.children %}
+      <a class="list-group-item {% if page == c %}active{% endif %}" href="{{ c|url }}">
+        {{ c.title }}
+      </a>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro render_guide_page(page) %}
+  <div class="container main-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-title">Guides</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        {{ render_guides_menu(page) }}
+      </div>
+      <div class="col-md-9">
+        <h1>{{ page.title }}</h1>
+        {{ page.body|safe }}
+      </div>
+    </div>
+  </div>
+{% endmacro %}

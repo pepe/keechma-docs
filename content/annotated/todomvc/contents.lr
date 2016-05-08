@@ -1,0 +1,407 @@
+_model: api-annotated
+---
+title: keechma-todomvc
+---
+body:
+
+<table class="annotated-wrap"><tr class="with-content"><td class="docs"><div class="header"><h1 class="project-name"><a href="http://github.com/keechma/keechma-todomvc">keechma-todomvc</a></h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br><p>TodoMVC implemented in Keechma</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr></td><td class="dep-version">1.7.0</td></tr><tr><td class="dep-name">org.clojure/clojurescript</td><td class="dotted"><hr></td><td class="dep-version">1.7.170</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr></td><td class="dep-version">0.2.374</td></tr><tr><td class="dep-name">keechma</td><td class="dotted"><hr></td><td class="dep-version">0.1.0-SNAPSHOT</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><pre><code class="language-clojure hljs">(<span class="hljs-name">this</span> space intentionally left almost blank)</code></pre></td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#keechma-todomvc.components.app">keechma-todomvc.components.app</a></li><li><a href="#keechma-todomvc.components.footer">keechma-todomvc.components.footer</a></li><li><a href="#keechma-todomvc.components.new-todo">keechma-todomvc.components.new-todo</a></li><li><a href="#keechma-todomvc.components.todo-input">keechma-todomvc.components.todo-input</a></li><li><a href="#keechma-todomvc.components.todo-item">keechma-todomvc.components.todo-item</a></li><li><a href="#keechma-todomvc.components.todo-list">keechma-todomvc.components.todo-list</a></li><li><a href="#keechma-todomvc.components.toggle-todos">keechma-todomvc.components.toggle-todos</a></li><li><a href="#keechma-todomvc.components">keechma-todomvc.components</a></li><li><a href="#keechma-todomvc.controllers.todos">keechma-todomvc.controllers.todos</a></li><li><a href="#keechma-todomvc.core">keechma-todomvc.core</a></li><li><a href="#keechma-todomvc.edb">keechma-todomvc.edb</a></li><li><a href="#keechma-todomvc.entities.todo">keechma-todomvc.entities.todo</a></li><li><a href="#keechma-todomvc.subscriptions">keechma-todomvc.subscriptions</a></li><li><a href="#keechma-todomvc.util">keechma-todomvc.util</a></li></ul></div></td><td class="codes"><pre><code class="language-clojure hljs">&#xA0;</code></pre></td></tr><tr class=""><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.app" name="keechma-todomvc.components.app"><h1 class="project-name">keechma-todomvc.components.app</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.app
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Main app component. Renders all the other components.</p>
+
+<p>  Depends on the <code>:todos-by-status</code> subscription which returns
+  the list of todos for a status. This is used to check if there
+  are any todos in the EntityDB.</p>
+
+<p>  This component depends on <code>:new-todo</code>, <code>:todo-list</code>, <code>:footer</code>
+  and <code>:toggle-todos</code> components. Each of these components has
+  it&apos;s own context passed in.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todos-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:todos-by-status</span> [<span class="hljs-symbol">:all</span>])
+          has-todos? (<span class="hljs-name"><span class="hljs-builtin-name">pos?</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> @todos-sub))]
+      [<span class="hljs-symbol">:section.todoapp</span>
+       [<span class="hljs-symbol">:header.header</span>
+        [<span class="hljs-symbol">:h1</span> <span class="hljs-string">&quot;todos&quot;</span>]
+        [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:new-todo</span>)]]
+       (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> has-todos? 
+         [<span class="hljs-symbol">:section.main</span>
+          [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:toggle-todos</span>)]
+          [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:todo-list</span>)]])
+       (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> has-todos? [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:footer</span>)])])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span></span>
+  (ui/constructor
+   {<span class="hljs-symbol">:renderer</span> render
+    <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:new-todo</span> <span class="hljs-symbol">:todo-list</span> <span class="hljs-symbol">:footer</span> <span class="hljs-symbol">:toggle-todos</span>]
+    <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:todos-by-status</span>]}))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.footer" name="keechma-todomvc.components.footer"><h1 class="project-name">keechma-todomvc.components.footer</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.footer
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> items-label [count]
+  (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> count <span class="hljs-number">1</span>) <span class="hljs-string">&quot;item&quot;</span> <span class="hljs-string">&quot;items&quot;</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Footer component. Renders the current item count, filter buttons
+  and &quot;Clear completed&quot; button.</p>
+
+<p>  Depends on the <code>:todos-by-status</code> subscription which returns the list
+  of todos for a status. It gets the list of <code>:completed</code> and <code>:active</code> 
+  todos from the <code>:todos-by-status</code> subscription.</p>
+
+<p>  Footer component reads the current status from the current route data
+  to determine which link should have the <code>selected</code> class added.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current-status (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @(<span class="hljs-name">ui/current-route</span> ctx) [<span class="hljs-symbol">:data</span> <span class="hljs-symbol">:status</span>])
+          completed-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:todos-by-status</span> [<span class="hljs-symbol">:completed</span>])
+          active-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:todos-by-status</span> [<span class="hljs-symbol">:active</span>])
+          active @active-sub
+          active-class #(<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> % current-status) <span class="hljs-string">&quot;selected&quot;</span>)
+          active-count (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> active)]
+      [<span class="hljs-symbol">:footer.footer</span>
+       [<span class="hljs-symbol">:span.todo-count</span>
+        [<span class="hljs-symbol">:strong</span> active-count] (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot; &quot;</span> (<span class="hljs-name">items-label</span> active-count) <span class="hljs-string">&quot; left&quot;</span>)]
+       [<span class="hljs-symbol">:ul.filters</span>
+        [<span class="hljs-symbol">:li&gt;a</span> {<span class="hljs-symbol">:href</span> (<span class="hljs-name">ui/url</span> ctx {<span class="hljs-symbol">:status</span> <span class="hljs-string">&quot;all&quot;</span>})
+                <span class="hljs-symbol">:class</span> (<span class="hljs-name">active-class</span> <span class="hljs-string">&quot;all&quot;</span>)} <span class="hljs-string">&quot;All&quot;</span>]
+        [<span class="hljs-symbol">:li&gt;a</span> {<span class="hljs-symbol">:href</span> (<span class="hljs-name">ui/url</span> ctx {<span class="hljs-symbol">:status</span> <span class="hljs-string">&quot;active&quot;</span>})
+                <span class="hljs-symbol">:class</span> (<span class="hljs-name">active-class</span> <span class="hljs-string">&quot;active&quot;</span>)} <span class="hljs-string">&quot;Active&quot;</span>]
+        [<span class="hljs-symbol">:li&gt;a</span> {<span class="hljs-symbol">:href</span> (<span class="hljs-name">ui/url</span> ctx {<span class="hljs-symbol">:status</span> <span class="hljs-string">&quot;completed&quot;</span>})
+                <span class="hljs-symbol">:class</span> (<span class="hljs-name">active-class</span> <span class="hljs-string">&quot;completed&quot;</span>)} <span class="hljs-string">&quot;Completed&quot;</span>]]
+       (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">pos?</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> @completed-sub))
+         [<span class="hljs-symbol">:button.clear-completed</span>
+          {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:destroy-completed</span>)}
+          <span class="hljs-string">&quot;Clear completed&quot;</span>])])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span> <span class="hljs-params">(ui/constructor {<span class="hljs-symbol">:renderer</span> render
+                                <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:todos-by-status</span>]})</span></span>)</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.new-todo" name="keechma-todomvc.components.new-todo"><h1 class="project-name">keechma-todomvc.components.new-todo</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.new-todo
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]
+            [reagent.core <span class="hljs-symbol">:refer</span> [atom]]
+            [keechma-todomvc.util <span class="hljs-symbol">:refer</span> [is-enter?]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> handle-key-down [ctx e new-todo]
+  (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name">is-enter?</span> (<span class="hljs-name">.-keyCode</span> e))
+    (<span class="hljs-name"><span class="hljs-builtin-name">do</span></span>
+      (<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:create-todo</span> @new-todo)
+      (<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> new-todo ))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the input field for the new todo. Stores the todo
+  value inside the local atom, and when the user presses enter
+  sends the command to creat todo.</p>
+
+<p>  Todo is created by the <code>todos</code> controller.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [new-todo (<span class="hljs-name"><span class="hljs-builtin-name">atom</span></span> <span class="hljs-string">&quot;&quot;</span>)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [] 
+      [<span class="hljs-symbol">:input.new-todo</span>
+       {<span class="hljs-symbol">:placeholder</span> <span class="hljs-string">&quot;What needs to be done?&quot;</span>
+        <span class="hljs-symbol">:value</span> @new-todo
+        <span class="hljs-symbol">:autofocus</span> <span class="hljs-literal">true</span>
+        <span class="hljs-symbol">:on-key-down</span> #(<span class="hljs-name">handle-key-down</span> ctx % new-todo)
+        <span class="hljs-symbol">:on-change</span> #(<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> new-todo (<span class="hljs-name"><span class="hljs-builtin-name">..</span></span> % -target -value))}])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(def component (ui/<span class="hljs-function"><span class="hljs-keyword">constructor</span> <span class="hljs-comment">{:renderer render}</span>))</span></code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.todo-input" name="keechma-todomvc.components.todo-input"><h1 class="project-name">keechma-todomvc.components.todo-input</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.todo-input
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]
+            [reagent.core <span class="hljs-symbol">:as</span> reagent <span class="hljs-symbol">:refer</span> [atom]]
+            [keechma-todomvc.util <span class="hljs-symbol">:refer</span> [is-enter? is-esc?]]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Focuses the input element.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(defn focus-input
+  [x]
+  (let [<span class="hljs-keyword">node</span> <span class="hljs-title">(reagent</span>/dom-<span class="hljs-keyword">node</span> <span class="hljs-title">x</span>)
+        length (count (.-value <span class="hljs-keyword">node</span><span class="hljs-title">))]
+    (.focus</span> <span class="hljs-keyword">node</span><span class="hljs-title">)
+    (.setSelectionRange</span> <span class="hljs-keyword">node</span> <span class="hljs-title">length</span> length)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Called on each key down.</p>
+
+<ul>
+<li>on <code>enter</code> key it will update the todo</li>
+<li>on <code>esc</code> key it will remove the edit input field</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> update-or-cancel
+  [update cancel e]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [key-code (<span class="hljs-name">.-keyCode</span> e)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name">is-enter?</span> key-code) (<span class="hljs-name">update</span>))
+    (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name">is-esc?</span> key-code) (<span class="hljs-name">cancel</span>))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the input element for todo editing. Input field has the
+  following event bindings:</p>
+
+<ul>
+<li>on blur - update the todo</li>
+<li>on change - store the current value in the <code>todo-title</code> atom</li>
+<li>on key down - call <code>update-or-cancel</code> function which will update the todo
+or remove the input element</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx todo-sub todo-title]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todo @todo-sub
+        update #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:update-todo</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> todo <span class="hljs-symbol">:title</span> @todo-title))
+        cancel #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:cancel-edit-todo</span>)
+        handle-key-down (<span class="hljs-name"><span class="hljs-builtin-name">partial</span></span> update-or-cancel update cancel)]
+    [<span class="hljs-symbol">:input.edit</span> {<span class="hljs-symbol">:value</span> @todo-title 
+                  <span class="hljs-symbol">:on-blur</span> update
+                  <span class="hljs-symbol">:on-change</span> #(<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> todo-title (<span class="hljs-name"><span class="hljs-builtin-name">..</span></span> % -target -value))
+                  <span class="hljs-symbol">:on-key-down</span> handle-key-down}]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Create the component using the <a href="https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-3-a-class-with-life-cycle-methods">Form-3 way</a>.</p>
+
+<p>  We have to do it in this way to be able to add a <code>:component-did-mount</code> lifecycle function
+  which will focus the input field when the component is mounted.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> make-renderer
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todo-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:editing-todo</span>)
+        todo-title (<span class="hljs-name"><span class="hljs-builtin-name">atom</span></span> (<span class="hljs-symbol">:title</span> @todo-sub))]
+    (<span class="hljs-name">reagent/create-class</span>
+     {<span class="hljs-symbol">:reagent-render</span> (<span class="hljs-name"><span class="hljs-builtin-name">partial</span></span> render ctx todo-sub todo-title) 
+      <span class="hljs-symbol">:component-did-mount</span> focus-input})))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span></span> {<span class="hljs-symbol">:renderer</span> make-renderer
+                <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:editing-todo</span>]})</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.todo-item" name="keechma-todomvc.components.todo-item"><h1 class="project-name">keechma-todomvc.components.todo-item</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.todo-item
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that returns the <code>li</code> element clasess based on <code>is-editing?</code> and
+  <code>completed?</code> arguments.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> classes
+  [is-editing? completed?]
+  (<span class="hljs-name">clojure.string/join</span> <span class="hljs-string">&quot; &quot;</span> (<span class="hljs-name"><span class="hljs-builtin-name">remove</span></span> <span class="hljs-literal">nil</span>? [(<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> is-editing? <span class="hljs-string">&quot;editing&quot;</span>)
+                                         (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> completed? <span class="hljs-string">&quot;completed&quot;</span>)])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders on todo item. If this item is currently being edited, renders the
+  edit input element.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx todo is-editing?]
+  [<span class="hljs-symbol">:li</span> {<span class="hljs-symbol">:class</span> (<span class="hljs-name">classes</span> is-editing? (<span class="hljs-symbol">:completed</span> todo))}
+   [<span class="hljs-symbol">:div.view</span> {<span class="hljs-symbol">:on-double-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:edit-todo</span> todo)}
+    [<span class="hljs-symbol">:input.toggle</span> {<span class="hljs-symbol">:type</span> <span class="hljs-string">&quot;checkbox&quot;</span>
+                    <span class="hljs-symbol">:checked</span> (<span class="hljs-symbol">:completed</span> todo)
+                    <span class="hljs-symbol">:on-change</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:toggle-todo</span> todo)}]
+    [<span class="hljs-symbol">:label</span> (<span class="hljs-symbol">:title</span> todo)]
+    [<span class="hljs-symbol">:button.destroy</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:destroy-todo</span> todo)}]]
+   (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> is-editing?
+     [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:todo-input</span>)])])</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> component (<span class="hljs-name">ui/constructor</span> {<span class="hljs-symbol">:renderer</span> render
+                                <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:todo-input</span>]}))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.todo-list" name="keechma-todomvc.components.todo-list"><h1 class="project-name">keechma-todomvc.components.todo-list</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.todo-list
+  (<span class="hljs-symbol">:require</span> (<span class="hljs-name">keechma.ui-component</span> <span class="hljs-symbol">:as</span> ui)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the list of todos. This component gets the list of todos
+  from the <code>:todos</code> subscription and the current editing id from the
+  <code>:editing-id</code> subscription.</p>
+
+<p>  Each todo item is rendered by the <code>:todo-item</code> component which receives
+  the todo entity and <code>is-editing?</code> (based on the todo entity id and the
+  current editing id)</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx] 
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todos-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:todos</span>)
+          todo-item-component (<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:todo-item</span>)
+          editing-id-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:editing-id</span>)
+          editing-id @editing-id-sub]
+      [<span class="hljs-symbol">:ul.todo-list</span>
+       (<span class="hljs-name"><span class="hljs-builtin-name">for</span></span> [todo @todos-sub]
+         <span class="hljs-comment">^{:key (:id todo)}</span>
+         [(<span class="hljs-name">ui/component</span> ctx <span class="hljs-symbol">:todo-item</span>) todo (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-symbol">:id</span> todo) editing-id)])])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span> <span class="hljs-params">(ui/constructor {<span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:todos</span> <span class="hljs-symbol">:editing-id</span>]
+                                <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:todo-item</span>]
+                                <span class="hljs-symbol">:renderer</span> render})</span></span>)</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components.toggle-todos" name="keechma-todomvc.components.toggle-todos"><h1 class="project-name">keechma-todomvc.components.toggle-todos</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.components.toggle-todos
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the checkbox component which toggles the status of all components.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [active-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:todos-by-status</span> [<span class="hljs-symbol">:active</span>])]
+      [<span class="hljs-symbol">:input.toggle-all</span>
+       {<span class="hljs-symbol">:type</span> <span class="hljs-string">&quot;checkbox&quot;</span>
+        <span class="hljs-symbol">:on-change</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:toggle-all</span> (<span class="hljs-name"><span class="hljs-builtin-name">..</span></span> % -target -checked))
+        <span class="hljs-symbol">:checked</span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> <span class="hljs-number">0</span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> @active-sub))}])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span> <span class="hljs-params">(ui/constructor {<span class="hljs-symbol">:renderer</span> render
+                                <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:todos-by-status</span>]})</span></span>)</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.components" name="keechma-todomvc.components"><h1 class="project-name">keechma-todomvc.components</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(ns keechma-todomvc<span class="hljs-selector-class">.components</span>
+  (:require [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.app</span> :as app]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.footer</span> :as footer]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.new-todo</span> :as new-todo]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.todo-item</span> :as todo-item]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.todo-list</span> :as todo-list]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.todo-input</span> :as todo-input]
+            [keechma-todomvc<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.toggle-todos</span> :as toggle-todos]))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>Defines the component system. All the components that have
+  the <code>:topic</code> assoced to them send commands to the <code>todos</code> controller.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> system
+  {<span class="hljs-symbol">:main</span> app/component
+   <span class="hljs-symbol">:new-todo</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> new-todo/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:todos</span>)
+   <span class="hljs-symbol">:footer</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> footer/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:todos</span>)
+   <span class="hljs-symbol">:todo-item</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> todo-item/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:todos</span>)
+   <span class="hljs-symbol">:todo-list</span> todo-list/component
+   <span class="hljs-symbol">:todo-input</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> todo-input/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:todos</span>)
+   <span class="hljs-symbol">:toggle-todos</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> toggle-todos/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:todos</span>)})</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.controllers.todos" name="keechma-todomvc.controllers.todos"><h1 class="project-name">keechma-todomvc.controllers.todos</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.controllers.todos
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller <span class="hljs-symbol">:refer</span> [dispatcher]]
+            [cljs.core.async <span class="hljs-symbol">:refer</span> [&lt;!]]
+            [keechma-todomvc.edb <span class="hljs-symbol">:as</span> edb]
+            [keechma-todomvc.entities.todo <span class="hljs-symbol">:as</span> todo])
+  (<span class="hljs-symbol">:require-macros</span> [cljs.core.async.macros <span class="hljs-symbol">:refer</span> [go]]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Commits the change to the app-db to the app-db atom.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> updater!
+  [modifier-fn]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [app-db-atom args]
+    (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> app-db-atom modifier-fn args)))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>This controller receives the commands from the UI and dispatches
+them to the functions that modify the state.</p>
+
+<ul>
+<li><code>params</code> function returns true because this controller should always be running</li>
+<li><code>start</code> function adds an empty todo list to the EntityDB</li>
+<li><code>handler</code> function dispatches commands from the UI to the modifier functions</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span>  
+  Controller []
+  controller/IController
+  (<span class="hljs-name">params</span> [_ _] <span class="hljs-literal">true</span>)
+  (<span class="hljs-name">start</span> [_ params app-db]
+    (<span class="hljs-name">edb/insert-collection</span> app-db <span class="hljs-symbol">:todos</span> <span class="hljs-symbol">:list</span> []))
+  (<span class="hljs-name">handler</span> [_ app-db-atom in-chan _]
+    (<span class="hljs-name">dispatcher</span> app-db-atom in-chan
+                {<span class="hljs-symbol">:toggle-todo</span> (<span class="hljs-name">updater!</span> todo/toggle-todo)
+                 <span class="hljs-symbol">:create-todo</span> (<span class="hljs-name">updater!</span> todo/create-todo)
+                 <span class="hljs-symbol">:update-todo</span> (<span class="hljs-name">updater!</span> todo/update-todo)
+                 <span class="hljs-symbol">:destroy-todo</span> (<span class="hljs-name">updater!</span> todo/destroy-todo)
+                 <span class="hljs-symbol">:edit-todo</span> (<span class="hljs-name">updater!</span> todo/edit-todo)
+                 <span class="hljs-symbol">:cancel-edit-todo</span> (<span class="hljs-name">updater!</span> todo/cancel-edit-todo)
+                 <span class="hljs-symbol">:destroy-completed</span> (<span class="hljs-name">updater!</span> todo/destroy-completed)
+                 <span class="hljs-symbol">:toggle-all</span> (<span class="hljs-name">updater!</span> todo/toggle-all)})))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.core" name="keechma-todomvc.core"><h1 class="project-name">keechma-todomvc.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.core
+  (<span class="hljs-symbol">:require</span> [keechma.app-state <span class="hljs-symbol">:as</span> app-state]
+            [keechma-todomvc.controllers.todos <span class="hljs-symbol">:as</span> todos]
+            [keechma-todomvc.components <span class="hljs-symbol">:as</span> components]
+            [keechma-todomvc.subscriptions <span class="hljs-symbol">:as</span> subscriptions]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">enable-console-print!</span>)</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Defines the application.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app-definition
+  {<span class="hljs-symbol">:routes</span> [[<span class="hljs-string">&quot;:status&quot;</span> {<span class="hljs-symbol">:status</span> <span class="hljs-string">&quot;all&quot;</span>}]]
+   <span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:todos</span> (<span class="hljs-name">todos/-&gt;Controller</span>)}
+   <span class="hljs-symbol">:components</span> components/system
+   <span class="hljs-symbol">:subscriptions</span> subscriptions/subscriptions
+   <span class="hljs-symbol">:html-element</span> (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)})</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defonce</span></span> running-app (<span class="hljs-name">clojure.core/atom</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that starts the application.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> start-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> running-app (<span class="hljs-name">app-state/start!</span> app-definition)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that restarts the application whenever the
+  code is hot reloaded.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restart-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current @running-app]
+    (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> current
+      (<span class="hljs-name">app-state/stop!</span> current start-app!)
+      (<span class="hljs-name">start-app!</span>))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">restart-app!</span>)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(defn <span class="hljs-keyword">on</span>-js-reload []
+  ;; optionally touch your app-state <span class="hljs-keyword">to</span> force rerendering depending <span class="hljs-keyword">on</span>
+  ;; your <span class="hljs-built_in">application</span>
+  ;; (swap! app-state update-<span class="hljs-keyword">in</span> [:__figwheel_counter] inc))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.edb" name="keechma-todomvc.edb"><h1 class="project-name">keechma-todomvc.edb</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.edb
+  (<span class="hljs-symbol">:require</span> [keechma.edb <span class="hljs-symbol">:as</span> edb]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> dbal (<span class="hljs-name">edb/make-dbal</span> {<span class="hljs-symbol">:todos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}}))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> wrap-entity-db-get [dbal-fn]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [db &amp; rest]
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [entity-db (<span class="hljs-symbol">:entity-db</span> db)]
+      (<span class="hljs-name"><span class="hljs-builtin-name">apply</span></span> dbal-fn (<span class="hljs-name"><span class="hljs-builtin-name">concat</span></span> [entity-db] rest)))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> wrap-entity-db-mutate [dbal-fn]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [db &amp; rest]
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [entity-db (<span class="hljs-symbol">:entity-db</span> db)
+          resulting-entity-db (<span class="hljs-name"><span class="hljs-builtin-name">apply</span></span> dbal-fn (<span class="hljs-name"><span class="hljs-builtin-name">concat</span></span> [entity-db] rest))]
+      (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> db <span class="hljs-symbol">:entity-db</span> resulting-entity-db))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> insert-item (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:insert-item</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> insert-named-item (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:insert-named-item</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> insert-collection (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:insert-collection</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> insert-meta (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:insert-meta</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> append-collection (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:append-collection</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> prepend-collection (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:prepend-collection</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> remove-item (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:remove-item</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> remove-named-item (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:remove-named-item</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> remove-collection (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:remove-collection</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> remove-meta (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:remove-meta</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-item-by-id (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-item-by-id</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-named-item (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-named-item</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-collection (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-collection</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-item-meta (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-item-meta</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-named-item-meta (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-named-item-meta</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> get-collection-meta (<span class="hljs-name">wrap-entity-db-get</span> (<span class="hljs-symbol">:get-collection-meta</span> dbal)))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> vacuum (<span class="hljs-name">wrap-entity-db-mutate</span> (<span class="hljs-symbol">:vacuum</span> dbal)))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> update-item-by-id [db entity-kw id data]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [item (<span class="hljs-name">get-item-by-id</span> db entity-kw id)]
+    (<span class="hljs-name">insert-item</span> db entity-kw (<span class="hljs-name"><span class="hljs-builtin-name">merge</span></span> item data))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> collection-empty? [collection]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [collection-meta (<span class="hljs-name"><span class="hljs-builtin-name">meta</span></span> collection)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">and</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-symbol">:state</span> collection-meta) <span class="hljs-symbol">:completed</span>)
+         (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> collection) <span class="hljs-number">0</span>))))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.entities.todo" name="keechma-todomvc.entities.todo"><h1 class="project-name">keechma-todomvc.entities.todo</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.entities.todo
+  (<span class="hljs-symbol">:require</span> [keechma-todomvc.edb <span class="hljs-symbol">:as</span> edb])
+  (<span class="hljs-symbol">:import</span> [goog.ui IdGenerator]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> id-generator (<span class="hljs-name">IdGenerator.</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Returns a new ID for the todo.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> id
+  []
+  (<span class="hljs-name">.getNextUniqueId</span> id-generator))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Is a todo in active state?</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> is-active?
+  [todo]
+  (<span class="hljs-symbol">:completed</span> todo))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Checks if the todo title is an empty string.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> has-title?
+  [todo]
+  (<span class="hljs-name"><span class="hljs-builtin-name">pos?</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> (<span class="hljs-name">clojure.string/trim</span> (<span class="hljs-symbol">:title</span> todo)))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Creates a new todo and adds it to a todos list if
+  the todo has a non empty title.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> create-todo
+  [app-db title]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todo {<span class="hljs-symbol">:id</span> (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;todo&quot;</span> (<span class="hljs-name">id</span>))
+              <span class="hljs-symbol">:completed</span> <span class="hljs-literal">false</span>
+              <span class="hljs-symbol">:title</span> title}]
+    (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-name">has-title?</span> todo)
+      (<span class="hljs-name">edb/prepend-collection</span> app-db <span class="hljs-symbol">:todos</span> <span class="hljs-symbol">:list</span> [todo])
+      app-db)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Saves the id of the todo that is being edited.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> edit-todo
+  [app-db todo]
+  (<span class="hljs-name">assoc-in</span> app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:editing-id</span>] (<span class="hljs-symbol">:id</span> todo)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Clears the id of the currently edited todo.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> cancel-edit-todo
+  [app-db]
+  (<span class="hljs-name">assoc-in</span> app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:editing-id</span>] <span class="hljs-literal">nil</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Updates the todo with new data if the todo has a non empty title.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> update-todo
+  [app-db todo]
+  (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-name">has-title?</span> todo)
+    (<span class="hljs-name"><span class="hljs-builtin-name">-&gt;</span></span> app-db
+        (<span class="hljs-name">cancel-edit-todo</span>)
+        (<span class="hljs-name">edb/update-item-by-id</span> <span class="hljs-symbol">:todos</span> (<span class="hljs-symbol">:id</span> todo) todo))
+    app-db))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Removes the todo from the EntityDB.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> destroy-todo
+  [app-db todo]
+  (<span class="hljs-name">edb/remove-item</span> app-db <span class="hljs-symbol">:todos</span> (<span class="hljs-symbol">:id</span> todo)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Toggles the <code>:completed</code> status.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> toggle-todo
+  [app-db todo]
+  (<span class="hljs-name">update-todo</span> app-db (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> todo <span class="hljs-symbol">:completed</span> (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> (<span class="hljs-symbol">:completed</span> todo)))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Returns the todos for a status.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> todos-by-status
+  [app-db status]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todos (<span class="hljs-name">edb/get-collection</span> app-db <span class="hljs-symbol">:todos</span> <span class="hljs-symbol">:list</span>)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">case</span></span> status
+      <span class="hljs-symbol">:completed</span> (<span class="hljs-name"><span class="hljs-builtin-name">filter</span></span> is-active? todos)
+      <span class="hljs-symbol">:active</span> (<span class="hljs-name"><span class="hljs-builtin-name">filter</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">complement</span></span> is-active?) todos)
+      todos)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Marks all todos as active or completed based on the <code>status</code> argument.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> toggle-all
+  [app-db status]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [todo-ids (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> <span class="hljs-symbol">:id</span> (<span class="hljs-name">todos-by-status</span> app-db <span class="hljs-symbol">:all</span>))]
+    (<span class="hljs-name"><span class="hljs-builtin-name">reduce</span></span> #(<span class="hljs-name">edb/update-item-by-id</span> %<span class="hljs-number">1</span> <span class="hljs-symbol">:todos</span> %<span class="hljs-number">2</span> {<span class="hljs-symbol">:completed</span> status}) app-db todo-ids)))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>Removes all completed todos from the EntityDB.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> destroy-completed
+  [app-db]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [completed-todos (<span class="hljs-name">todos-by-status</span> app-db <span class="hljs-symbol">:completed</span>)
+        completed-todos-ids (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> <span class="hljs-symbol">:id</span> completed-todos)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">reduce</span></span> #(<span class="hljs-name">edb/remove-item</span> %<span class="hljs-number">1</span> <span class="hljs-symbol">:todos</span> %<span class="hljs-number">2</span>) app-db completed-todos-ids)))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.subscriptions" name="keechma-todomvc.subscriptions"><h1 class="project-name">keechma-todomvc.subscriptions</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.subscriptions
+  (<span class="hljs-symbol">:require</span> [keechma-todomvc.edb <span class="hljs-symbol">:as</span> edb]
+            [keechma-todomvc.entities.todo <span class="hljs-symbol">:as</span> todo])
+  (<span class="hljs-symbol">:require-macros</span> [reagent.ratom <span class="hljs-symbol">:refer</span> [reaction]]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Based on the current route, returns the list of todos.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> todos
+  [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [db @app-db
+         current-status (<span class="hljs-name"><span class="hljs-builtin-name">keyword</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> db [<span class="hljs-symbol">:route</span> <span class="hljs-symbol">:data</span> <span class="hljs-symbol">:status</span>]))]
+     (<span class="hljs-name">todo/todos-by-status</span> @app-db current-status))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Returns the id of the todo that is being edited.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> editing-id
+  [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:editing-id</span>])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Returns the todo that is being edited.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> editing-todo
+  [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [db @app-db
+         editing-id (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:editing-id</span>])]
+     (<span class="hljs-name">edb/get-item-by-id</span> @app-db <span class="hljs-symbol">:todos</span> editing-id))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Returns the list of todos for passed status.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> todos-by-status
+  [app-db status]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">todo/todos-by-status</span> @app-db status)))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">subscriptions</span></span> {<span class="hljs-symbol">:todos</span> todos
+                    <span class="hljs-symbol">:editing-id</span> editing-id
+                    <span class="hljs-symbol">:editing-todo</span> editing-todo
+                    <span class="hljs-symbol">:todos-by-status</span> todos-by-status})</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-todomvc.util" name="keechma-todomvc.util"><h1 class="project-name">keechma-todomvc.util</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-todomvc.util)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> is-enter? [key-code]
+  (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> key-code <span class="hljs-number">13</span>))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> is-esc? [key-code]
+  (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> key-code <span class="hljs-number">27</span>))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr></table>

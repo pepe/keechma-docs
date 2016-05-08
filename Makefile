@@ -10,22 +10,28 @@ docs: clearguides \
 			copygraphdocs \
 			buildlogindocs \
 			copylogindocs \
-			build
+			build \
+			copytodest
 
 clearguides:
 	rm -rf docs
 	rm -rf dest
 
 copyguides:
-	mkdir -p docs
-	cp -r ../keechma/guides/* docs
-	cp ../keechma/README.md docs/index.md
+	mkdir -p docs/guides
+	cp -r ../keechma/guides/* docs/guides
+	cp ../keechma/README.md docs/guides.md
 
 buildapidocs:
 	cd ../keechma && lein codox
+	cd ../entitydb && lein codox
+	cd ../router && lein codox
 
 copyapidocs:
-	cp -r ../keechma/target/doc docs/api
+	mkdir -p docs/api
+	cp -r ../keechma/target/doc docs/api/keechma
+	cp -r ../entitydb/target/doc docs/api/entitydb
+	cp -r ../router/target/doc docs/api/router
 
 buildcounterdocs:
 	cd ../keechma-counter && lein marg
@@ -60,3 +66,14 @@ build:
 
 deploy:
 	node deploy.js
+
+copytodest:
+	rm -rf content/guides
+	rm -rf content/annotated/*/
+	rm -rf content/api/*/
+	cp -r dest/guides content/guides
+	cp -r dest/annotated/* content/annotated/
+	cp -r dest/api/* content/api
+	touch content/guides/contents.lr
+	touch content/annotated/contents.lr
+	touch content/api/contents.lr

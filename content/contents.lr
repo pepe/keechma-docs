@@ -1,0 +1,24 @@
+title: Welcome to Keechma!
+---
+body:
+
+<div class="row">
+  <div class="col-md-4">
+    <a href="/guides" class="btn-info btn btn-landing">
+      <img src="/188723.svg">
+      Read the Guides
+    </a>
+  </div>
+   <div class="col-md-4">
+    <a href="/annotated" class="btn-info btn btn-landing">
+      <img src="/367549.svg">
+      Application Examples
+    </a>
+  </div>
+   <div class="col-md-4">
+    <a href="/api" class="btn-info btn btn-landing">
+      <img src="/38239.svg">
+      API Docs
+    </a>
+  </div>
+</div>

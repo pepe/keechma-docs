@@ -1,0 +1,379 @@
+@import "variables.scss";
+@import "../node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
+@import "bootswatch.scss";
+@import "api.scss";
+
+@import url("https://fonts.googleapis.com/css?family=Share");
+
+body {
+    font-size: 17px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+header {
+    background: #212032;
+    padding: 20px 0 50px;
+    border-bottom: 1px solid #101019;
+    &.landing-header {
+        padding-bottom: 20px;
+    }
+    #logo {
+        width: 300px;
+        display: block;
+        margin-left: -6px;
+        
+    }
+    .nav-main {
+        padding-top: 6px;
+        li {
+            float: left;
+            margin-left: 5px;
+            &:first-child {
+                margin-left: 0;
+            }
+            a {
+                font-size: 110%;
+                display: block;
+                height: 56px;
+                padding: 0 15px;
+                line-height: 56px;
+                background: lighten($brand-primary, 10%);
+                color: darken($brand-primary, 5%);
+                &:hover {
+                    background: white;
+                    text-decoration: none;
+                }
+                &.active {
+                    background: #cf2e14;
+                    color: white;
+                }
+            }
+        }
+    }
+}
+.main-container {
+}
+
+.main-container p, .main-container ul, .main-container ol {
+    font-family: Georgia, sans-serif;
+}
+
+.main-container .diagram img {
+    max-width: 100%;
+    display: block;
+    margin: 20px auto;
+}
+.main-container .diagram--narrow img {
+    max-width: 80%;
+}
+
+.main-container p, .main-container ul, .main-container ol {
+    margin-bottom: 1.4em;
+}
+
+.main-container ul ul, .main-container ul ol, .main-container ol ul, .main-container ol ol {
+    margin-bottom: 0;
+}
+
+.main-container h1 {
+    margin-bottom: 15px;
+}
+
+.main-container h2 {
+    border-top: 1px solid #eee;
+    margin-top: 30px;
+    padding-top: 30px;
+}
+
+.guides-menu {
+    margin-top: 25px;
+    a {
+        border: none;
+        background: #ebebeb;
+        margin-bottom: 1px;
+        &:hover {
+            color: white;
+            background: lighten($brand-primary, 10%);
+        }
+    }
+}
+
+.page-title {
+    float: left;
+    background: #cf2e14;
+    height: 60px;
+    line-height: 60px;
+    margin: -30px 0 0px;
+    color: white;
+    padding: 0 15px;
+    font-size: 24px;
+}
+.page-body-wrap {
+    padding-top: 30px;
+}
+
+.landing-wrap {
+    border-top: 1px solid #333245;
+    background: #262539;
+    padding: 50px 0 80px;
+    color: #dfe9fc;
+    font-size: 32px;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    .clojars-badge-wrap {
+        font-size: 50%;
+        margin-top: 10px;
+        .clojars, .version {
+            display: inline-block;
+            color: white;
+            padding: 5px 10px;
+            background: #323075;
+        }
+        .version {
+            background: #cd0030;
+        }
+    }
+}
+
+.btn-landing {
+    display: block;
+    font-size: 150%;
+    img {
+        display: block;
+        width: 33.3%;
+        margin: 10px auto;
+    }
+}
+
+.page-section {
+    border-top: 1px solid #e0e0e0;
+    margin-top: 60px;
+}
+
+.news-post {
+    h2 {
+        border-top: none;
+    }
+}
+
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #333;
+  background: #f8f8f8;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #998;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #333;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #008080;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #d14;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #900;
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #458;
+  font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #000080;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #009926;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #990073;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #0086b3;
+}
+
+.hljs-meta {
+  color: #999;
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  background: #fdd;
+}
+
+.hljs-addition {
+  background: #dfd;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+
+pre {
+    background: #f8f8f8;
+    border-radius: 0;
+    margin: 20px 0;
+    border: none;
+}
+
+td.docs {
+    width: 38.2%;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0 15px;
+    border: none;
+    background-color: #FFF;
+}
+td.docs .docs-header {
+    padding-bottom: 12px;
+}
+td.docs p {
+    margin-bottom: 12px;
+    margin-top: 12px;
+    font-family: Georgia, sans-serif;
+}
+td.docs h1.project-name {
+    font-size: 24px;
+    margin: 0;
+    display: inline;
+}
+td.docs .toc-link {
+    font-size: 12px;
+    margin-left: 10px;
+    text-decoration: none;
+}
+td.docs .header {
+    margin-top: 30px;
+}
+td.docs h1.project-name {
+    font-size: 34px;
+    display: inline;
+}
+td.docs h2.project-version {
+    font-size: 18px;
+    margin-top: 0;
+    display: inline;
+    margin-left: 10px;
+}
+td.docs .dependencies table {
+    font-size: 16px;
+    width: 99.99%;
+    border: none;
+    margin-left: 20px;
+}
+td.docs .dependencies td {
+    line-height: 1;
+    padding-right: 20px;
+    white-space: nowrap;
+    padding-top: 10px;
+}
+
+td.docs .dependencies td.dotted hr {
+    margin-top: -15px;
+    border-top: none;
+    border-bottom: 1px dotted #999;
+    margin-bottom: 0;
+    height: 25px;
+}
+td.docs .dependencies .dotted {
+    width: 99%;
+}
+td.docs .dependencies .dep-version {
+    text-align: right;
+}
+td.docs .toc {
+    font-size: 16px;
+    line-height: 1.5;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 50px;
+    padding-bottom: 50px;
+}
+td.docs a {
+    text-decoration: none;
+    color: #39618A;
+}
+td.docs a:hover {
+    text-decoration: underline;
+}
+td.codes {
+    background: #f8f8f8;
+    width: 61.8%;
+}
+td.codes pre {
+    margin: 0;
+}
+td.codes pre.hljs {
+    padding-top: 0;
+}
+tr.with-content td.codes, tr.with-content td.docs {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+tr.with-content:first-child td.codes, tr.with-content:first-child td.docs {
+    border-top: none;
+    border-bottom: none;
+}
+
+tr.with-content.no-bottom-border {
+    td.docs, td.codes {
+        border-bottom: none;
+    }
+}
+
+.section-spacer {
+    .codes, .docs {
+        border-top: 3px solid #e0e0e0;
+        padding-top: 40px;
+    }
+}

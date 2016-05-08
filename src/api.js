@@ -11,43 +11,59 @@ var highlight = function($){
 }
 
 function isURL(str) {
-     var urlRegex = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
-     var url = new RegExp(urlRegex, 'i');
-     return str.length < 2083 && url.test(str);
+  var urlRegex = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
+  var url = new RegExp(urlRegex, 'i');
+  return str.length < 2083 && url.test(str);
 }
 
-module.exports = (function(){
-  var navbar, analytics;
-  return function(content){
-    var $ = cheerio.load(beautifyHtml(content));
+function rewriteURLs($, destFilename) {
+  $('.sidebar.secondary a').each(function(){
+    var $a = $(this);
+    $a.attr('href', '#' + $a.attr('href').split('#').pop());
+  });
 
-
-    if(!navbar){
-      navbar = fs.readFileSync('templates/navbar.html', 'utf-8');
-    }
-    $('body').prepend(navbar);
-    $('.navbar .container').removeClass('container').addClass('container-fluid');
-    $('body>table').addClass('annotated-wrap');
-    $('.navbar a').each(function(i, a){
-      var $a = $(a);
-      if(!isURL($a.attr('href'))){
-        $a.attr('href', "../" + $a.attr('href'));
-      }
-    });
-
-    $('link').remove();
-    $('head').append('<link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="../css/modifications.css"><link rel="stylesheet" href="../css/api.css">');
-
-    highlight($); 
-
-    $('pre.deps').wrap('<div class="pre-deps-wrap"></div>');
-    $('#api-link').addClass('active');
+  $('.sidebar.primary a').each(function(){
+    var $a = $(this);
+    var href = $a.attr('href');
+    var isIndex = $a.closest('.index-link').length > 0;
+    var depth = parseInt($a.closest('li').attr('class').match(/\bdepth-([0-9]+)\b/)[1], 10);
     
-    if(!analytics){
-      analytics = fs.readFileSync('templates/analytics.html', 'utf-8');
+    if (isIndex) {
+      href = '/api/' + destFilename.split('/')[0] + '/';
+      $a.attr('href', href);
+    } else {
+      href = '/api/' + destFilename.split('/')[0] + '/' + href.replace(/\.html$/, '').replace(/\./, '_');
+      $a.attr('href', href);
     }
-    $('body').append(analytics);
+  });
 
-    return $.html();
-  };
-})();
+  $('.namespace a').each(function(){
+    var $a = $(this);
+    var href = $a.attr('href');
+    var hrefParts = href.split('#');
+
+    hrefParts[0] = hrefParts[0].replace(/\.html$/, '').replace(/\./, '_')
+
+    $a.attr('href', hrefParts.join('#'));
+  })
+}
+
+module.exports = function(content, files, destFilename){
+  var $ = cheerio.load(beautifyHtml(content));
+  var title = 'API / ' + $('title').text();
+  $('#header').remove();
+  $('body>table').addClass('annotated-wrap');
+  $('link').remove();
+
+  highlight($); 
+  rewriteURLs($, destFilename.replace(/^dest\/api\//, '').replace(/\/contents\.lr$/, ''));
+  
+  $('pre.deps').wrap('<div class="pre-deps-wrap"></div>');
+
+  return [
+    "_model: api-annotated",
+    "title: " + title,
+    "body:\n\n" + '<div class="api-container">' + $('body').html() + '</div>'
+  ].join("\n---\n");
+};
+

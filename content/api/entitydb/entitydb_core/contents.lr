@@ -1,0 +1,455 @@
+_model: api-annotated
+---
+title: API / entitydb.core documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/entitydb/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1 current">
+                <a href="/api/entitydb/entitydb_core">
+                    <div class="inner"><span>entitydb.core</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-append-collection">
+                    <div class="inner"><span>append-collection</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-collection">
+                    <div class="inner"><span>get-collection</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-collection-meta">
+                    <div class="inner"><span>get-collection-meta</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-item-by-id">
+                    <div class="inner"><span>get-item-by-id</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-item-meta">
+                    <div class="inner"><span>get-item-meta</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-named-item">
+                    <div class="inner"><span>get-named-item</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-get-named-item-meta">
+                    <div class="inner"><span>get-named-item-meta</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-insert-collection">
+                    <div class="inner"><span>insert-collection</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-insert-item">
+                    <div class="inner"><span>insert-item</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-insert-item-when-not-nil">
+                    <div class="inner"><span>insert-item-when-not-nil</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-insert-meta">
+                    <div class="inner"><span>insert-meta</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-insert-named-item">
+                    <div class="inner"><span>insert-named-item</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-make-dbal">
+                    <div class="inner"><span>make-dbal</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-prepend-collection">
+                    <div class="inner"><span>prepend-collection</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-remove-collection">
+                    <div class="inner"><span>remove-collection</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-remove-item">
+                    <div class="inner"><span>remove-item</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-remove-meta">
+                    <div class="inner"><span>remove-meta</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-remove-named-item">
+                    <div class="inner"><span>remove-named-item</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-vacuum">
+                    <div class="inner"><span>vacuum</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">entitydb.core</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-append-collection">
+            <h3>append-collection</h3>
+            <div class="usage"><code>(append-collection schema db entity-kw collection-key data)</code><code>(append-collection schema db entity-kw collection-key data meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Appends items to an existing collection.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> collection [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;foo&quot;</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-collection</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> collection))
+<span class="hljs-comment">;; Returns the new version of entity db. Each item will be stored</span>
+<span class="hljs-comment">;; in the internal store map and collection will contain only the</span>
+<span class="hljs-comment">;; item ids.</span>
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns a collection of items named `:list`. Although internally collections</span>
+<span class="hljs-comment">;; stores only a vector of ids, this function will return a vector of entities.</span>
+<span class="hljs-comment">;;</span>
+<span class="hljs-comment">;; [{:id 1 :name &quot;foo&quot;} {:id 2 :name &quot;bar&quot;}]</span>
+
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v3 (<span class="hljs-name">append-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> [{<span class="hljs-symbol">:id</span> <span class="hljs-number">3</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;baz}]))
+
+(get-collection schema entity-db-v3 :foos :list)
+;; Returns [{:id 1 :name &quot;</span>foo<span class="hljs-string">&quot;} {:id 2 :name &quot;</span>bar} {<span class="hljs-symbol">:id</span> <span class="hljs-number">3</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;baz&quot;</span>}]
+
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-collection">
+            <h3>get-collection</h3>
+            <div class="usage"><code>(get-collection schema db entity-kw collection-key)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Gets collection by it&#x2019;s key. Internally collections store only entity ids, but this function will return a collection of entities based on the ids stored in the collection</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> collection [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;foo&quot;</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-collection</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> collection))
+<span class="hljs-comment">;; Returns the new version of entity db. Each item will be stored</span>
+<span class="hljs-comment">;; in the internal store map and collection will contain only the</span>
+<span class="hljs-comment">;; item ids.</span>
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns a collection of items named `:list`. Although internally collections</span>
+<span class="hljs-comment">;; stores only a vector of ids, this function will return a vector of entities.</span>
+<span class="hljs-comment">;;</span>
+<span class="hljs-comment">;; [{:id 1 :name &quot;foo&quot;} {:id 2 :name &quot;bar&quot;}]</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-collection-meta">
+            <h3>get-collection-meta</h3>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Returns the meta data for a collection.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-item-by-id">
+            <h3>get-item-by-id</h3>
+            <div class="usage"><code>(get-item-by-id schema db entity-kw id)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Gets an entity from the store by the id</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-item-meta">
+            <h3>get-item-meta</h3>
+            <div class="usage"><code>(get-item-meta schema db entity-kw id)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Gets meta data for an entity.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-named-item">
+            <h3>get-named-item</h3>
+            <div class="usage"><code>(get-named-item schema db entity-kw collection-key)</code><code>(get-named-item schema db entity-kw collection-key include-meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Gets an entity referenced from the named item slot. Internally named slots store only entity ids but this function will return an entity based on the id.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-get-named-item-meta">
+            <h3>get-named-item-meta</h3>
+            <div class="usage"><code>(get-named-item-meta schema db entity-kw collection-key)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Returns the meta data for an entity referenced in the named item slot.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-insert-collection">
+            <h3>insert-collection</h3>
+            <div class="usage"><code>(insert-collection schema db entity-kw collection-key data)</code><code>(insert-collection schema db entity-kw collection-key data meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Inserts a collection of items into the EntityDB. Each item will be stored in the internal store map, and the collection will be stored as a vector of entity identities.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> collection [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;foo&quot;</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-collection</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> collection))
+<span class="hljs-comment">;; Returns the new version of entity db. Each item will be stored</span>
+<span class="hljs-comment">;; in the internal store map and collection will contain only the</span>
+<span class="hljs-comment">;; item ids.</span>
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns a collection of items named `:list`. Although internally collections</span>
+<span class="hljs-comment">;; stores only a vector of ids, this function will return a vector of entities.</span>
+<span class="hljs-comment">;;</span>
+<span class="hljs-comment">;; [{:id 1 :name &quot;foo&quot;} {:id 2 :name &quot;bar&quot;}]</span>
+
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-insert-item">
+            <h3>insert-item</h3>
+            <div class="usage"><code>(insert-item schema db entity-kw item)</code><code>(insert-item schema db entity-kw item meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Inserts an item into the EntityDB collection.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> item {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;Foo&quot;</span>})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> item-meta {<span class="hljs-symbol">:is-loading</span> <span class="hljs-literal">false</span>})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-item</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> item item-meta))
+<span class="hljs-comment">;; Returns the new version of the entity-db with the item inserted</span>
+<span class="hljs-comment">;; inserted into the store</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-insert-item-when-not-nil">
+            <h3>insert-item-when-not-nil</h3>
+            <div class="usage"><code>(insert-item-when-not-nil schema db entity-kw item)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Inserts an entity into the EntityDB if the entity is not nil.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-insert-meta">
+            <h3>insert-meta</h3>
+            <div class="usage"><code>(insert-meta db entity-kw meta-key meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Inserts meta data for an entity or collection into the store.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-insert-named-item">
+            <h3>insert-named-item</h3>
+            <div class="usage"><code>(insert-named-item schema db entity-kw collection-key item)</code><code>(insert-named-item schema db entity-kw collection-key item meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Inserts an item into the EntityDB, and references it from the named item slot.</p>
+                    <p>Item will be stored in the internal store, and named item slot will contain only the identity of the item.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-named-item</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;foo&quot;</span>}))
+<span class="hljs-comment">;; Returns the new version of the entity-db with the entity saved in the store and</span>
+<span class="hljs-comment">;; referenced from the `:current` named item slot.</span>
+
+(<span class="hljs-name">get-named-item</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; Returns the entity referenced from the `:current` named slot.</span>
+
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-make-dbal">
+            <h3>make-dbal</h3>
+            <div class="usage"><code>(make-dbal schema)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Returns a map with all public functions. These functions will have <code>schema</code> partially applied to them so you don&#x2019;t have to pass the schema around.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-prepend-collection">
+            <h3>prepend-collection</h3>
+            <div class="usage"><code>(prepend-collection schema db entity-kw collection-key data)</code><code>(prepend-collection schema db entity-kw collection-key data meta)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Prepends items to an existing collection.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> collection [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;foo&quot;</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>}])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-collection</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> collection))
+<span class="hljs-comment">;; Returns the new version of entity db. Each item will be stored</span>
+<span class="hljs-comment">;; in the internal store map and collection will contain only the</span>
+<span class="hljs-comment">;; item ids.</span>
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns a collection of items named `:list`. Although internally collections</span>
+<span class="hljs-comment">;; stores only a vector of ids, this function will return a vector of entities.</span>
+<span class="hljs-comment">;;</span>
+<span class="hljs-comment">;; [{:id 1 :name &quot;foo&quot;} {:id 2 :name &quot;bar&quot;}]</span>
+
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v3 (<span class="hljs-name">prepend-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> [{<span class="hljs-symbol">:id</span> <span class="hljs-number">3</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;baz&quot;</span>}]))
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v3 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns [{:id 3 :name &quot;baz&quot;} {:id 1 :name &quot;foo&quot;} {:id 2 :name &quot;bar&quot;}]</span>
+
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-remove-collection">
+            <h3>remove-collection</h3>
+            <div class="usage"><code>(remove-collection db entity-kw collection-key)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Removes the collection. Entities referenced from the collection will still be stored in the internal store, but won&#x2019;t be available through the collection API.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> foo-entity {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-collection</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> [foo-entity]))
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns `[{:id 1 :name &quot;bar&quot;}]`</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v3 (<span class="hljs-name">remove-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>))
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; Returns `nil`</span>
+
+(<span class="hljs-name">get-item-by-id</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-number">1</span>)
+<span class="hljs-comment">;; Returns `{:id 1 :name &quot;bar&quot;}`</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-remove-item">
+            <h3>remove-item</h3>
+            <div class="usage"><code>(remove-item schema db entity-kw id)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Removes item from the store. It will also remove it from any named-item slots or collections.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> foo-entity {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;Bar&quot;</span>})
+
+<span class="hljs-comment">;; insert `foo-entity` in the `:current` named item slot</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-named-item</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span> foo-entity))
+
+<span class="hljs-comment">;; insert `foo-entity` as a part of the `:list` collection</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v3 (<span class="hljs-name">insert-collection</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span> [foo-entity]))
+
+<span class="hljs-comment">;; get `foo-entity` from the entity-db</span>
+(<span class="hljs-name">get-item-by-id</span> schema entity-db-v3 <span class="hljs-symbol">:foos</span> <span class="hljs-number">1</span>)
+<span class="hljs-comment">;; returns `foo-entity`</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v4 (<span class="hljs-name">remove-item</span> schema entity-db <span class="hljs-symbol">:foos</span> <span class="hljs-number">1</span>))
+
+(<span class="hljs-name">get-named-item</span> schema entity-db-v4 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; returns `nil`</span>
+
+(<span class="hljs-name">get-collection</span> schema entity-db-v4 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:list</span>)
+<span class="hljs-comment">;; returns []</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-remove-meta">
+            <h3>remove-meta</h3>
+            <div class="usage"><code>(remove-meta db entity-kw id)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Removes any meta data stored on the entity or collection</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-remove-named-item">
+            <h3>remove-named-item</h3>
+            <div class="usage"><code>(remove-named-item db entity-kw collection-key)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Removes the named-item slot. Entity will still be stored in the internal store, but won&#x2019;t be available through the named-item slot.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v1 {})
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:foos</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> foo-entity {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;bar&quot;</span>})
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v2 (<span class="hljs-name">insert-named-item</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span> foo-entity))
+
+(<span class="hljs-name">get-named-item</span> schema entity-db-v1 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; Returns `{:id 1 :name &quot;bar&quot;}`</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> entity-db-v3 (<span class="hljs-name">remove-named-item</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span>))
+
+(<span class="hljs-name">get-named-item</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-symbol">:current</span>)
+<span class="hljs-comment">;; Returns `nil`</span>
+
+(<span class="hljs-name">get-item-by-id</span> schema entity-db-v2 <span class="hljs-symbol">:foos</span> <span class="hljs-number">1</span>)
+<span class="hljs-comment">;; Returns `{:id 1 :name &quot;bar&quot;}`</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-vacuum">
+            <h3>vacuum</h3>
+            <div class="usage"><code>(vacuum db)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Removes orphaned entities from the EntityDB. Any entity that is not referenced in a collection or in a named item slot will be removed from the EntityDB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

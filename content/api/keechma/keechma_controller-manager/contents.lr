@@ -1,0 +1,92 @@
+_model: api-annotated
+---
+title: API / keechma.controller-manager documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/keechma/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>keechma</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_app-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>app-state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch current">
+                <a href="/api/keechma/keechma_controller-manager">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller-manager</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/keechma/keechma_ui-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>ui-component</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-start">
+                    <div class="inner"><span>start</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">keechma.controller-manager</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-start">
+            <h3>start</h3>
+            <div class="usage"><code>(start route-chan commands-chan app-db controllers)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Starts the controller manager. Controller manager is the central part of the application that manages the lifecycle of the controllers and routes the messages sent to them.</p>
+                    <p><code>start</code> function receives the following parameters:</p>
+                    <ul>
+                        <li><code>route-chan</code> - Route changes will communicated through this channel</li>
+                        <li><code>commands-chan</code> - User (UI) commands will be sent through this channel</li>
+                        <li><code>app-db</code> - application state atom</li>
+                        <li><code>controllers</code> map of controllers registered for the app</li>
+                    </ul>
+                    <p>Each time when the new route data comes through the <code>route-chan</code> controller manager will do the following:</p>
+                    <ul>
+                        <li>call the <code>params</code> function on each registered controller</li>
+                        <li>compare the value returned by the <code>params</code> function with the value that was returned last time when the route changes</li>
+                        <li>based on the comparison it will do one of the following:</li>
+                        <li>if the last value was <code>nil</code> and the current value is <code>nil</code> - do nothing</li>
+                        <li>if the last value was <code>nil</code> and the current value is not <code>nil</code> - start the controller</li>
+                        <li>if the last value was not <code>nil</code> and the current value is <code>nil</code> - stop the controller</li>
+                        <li>if the last value was not <code>nil</code> and the current value is not <code>nil</code> and these values are the same - do nothing</li>
+                        <li>if the last value was not <code>nil</code> and the current value is not <code>nil</code> and these values are different - restart the controller (stop the current instance and start the new one)</li>
+                    </ul>
+                    <p>Controller manager also acts as a command router. Each time a command comes - through the <code>commands-chan</code> the name of the command should look like this <code>[:controlnler-key :command-name]</code>. Controller manager will
+                        route the <code>:command-name</code> command to the appropriate controller based on the <code>:controller-key</code>. Controller key is the key under which the controller was registered in the <code>controllers</code> argument.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

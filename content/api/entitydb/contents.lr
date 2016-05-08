@@ -1,0 +1,66 @@
+_model: api-annotated
+---
+title: API / Entitydb 0.1.0
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 current">
+                <a href="/api/entitydb/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1 ">
+                <a href="/api/entitydb/entitydb_core">
+                    <div class="inner"><span>entitydb.core</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-index" id="content">
+        <h1><span class="project-title"><span class="project-name">Entitydb</span> <span class="project-version">0.1.0</span></span></h1>
+        <div class="doc">
+            <p>EntityDB - In memory entity store for ClojureScript applications.</p>
+        </div>
+        <h2>Installation</h2>
+        <p>To install, add the following dependency to your project or build file:</p><div class="pre-deps-wrap"><pre class="deps">[keechma/entitydb &quot;0.1.0&quot;]</pre></div>
+        <h2>Namespaces</h2>
+        <div class="namespace">
+            <h3><a href="entitydb_core">entitydb.core</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="entitydb_core#var-append-collection">append-collection</a> </li>
+                    <li> <a href="entitydb_core#var-get-collection">get-collection</a> </li>
+                    <li> <a href="entitydb_core#var-get-collection-meta">get-collection-meta</a> </li>
+                    <li> <a href="entitydb_core#var-get-item-by-id">get-item-by-id</a> </li>
+                    <li> <a href="entitydb_core#var-get-item-meta">get-item-meta</a> </li>
+                    <li> <a href="entitydb_core#var-get-named-item">get-named-item</a> </li>
+                    <li> <a href="entitydb_core#var-get-named-item-meta">get-named-item-meta</a> </li>
+                    <li> <a href="entitydb_core#var-insert-collection">insert-collection</a> </li>
+                    <li> <a href="entitydb_core#var-insert-item">insert-item</a> </li>
+                    <li> <a href="entitydb_core#var-insert-item-when-not-nil">insert-item-when-not-nil</a> </li>
+                    <li> <a href="entitydb_core#var-insert-meta">insert-meta</a> </li>
+                    <li> <a href="entitydb_core#var-insert-named-item">insert-named-item</a> </li>
+                    <li> <a href="entitydb_core#var-make-dbal">make-dbal</a> </li>
+                    <li> <a href="entitydb_core#var-prepend-collection">prepend-collection</a> </li>
+                    <li> <a href="entitydb_core#var-remove-collection">remove-collection</a> </li>
+                    <li> <a href="entitydb_core#var-remove-item">remove-item</a> </li>
+                    <li> <a href="entitydb_core#var-remove-meta">remove-meta</a> </li>
+                    <li> <a href="entitydb_core#var-remove-named-item">remove-named-item</a> </li>
+                    <li> <a href="entitydb_core#var-vacuum">vacuum</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

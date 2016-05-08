@@ -1,0 +1,63 @@
+_model: guide
+---
+order: 1
+---
+title: Introduction to Keechma
+---
+body:
+
+
+<p>Keechma implements a set of utilities that make it easier to develop predictable, consistent and deterministic applications.</p>
+<h2>Glossary</h2>
+<ul>
+<li><strong>Application</strong>: combination of the routes, controllers, components and subscriptions that work together as a unit. Application state is stored in the internal atom.</li>
+<li><strong>Routes</strong>: a list of route patterns that describe how to transform URL to the data and data to the URL.</li>
+<li><strong>Controller Manager</strong>: internal part of the application that starts or stops controllers based on the current route params.</li>
+<li><strong>Controllers</strong>: Clojure records that implement the <code>controller/IController</code> protocol. They are managed by the controller manager. Controllers are responsible for the following:
+<ol>
+<li>When started they (can) mutate the application state and load the data.</li>
+<li>When stopped they (can) mutate the application state and clean up the loaded data.</li>
+<li>When the user sends a command (e.g. by clicking on button) it is routed to the appropriate controller which reacts to the command and mutates the application state accordingly.</li>
+</ol>
+</li>
+<li><strong>Subscriptions</strong>: functions that return a subset of the application state to the UI components.</li>
+<li><strong>Entity DB</strong>: stores the application entities.
+<ul>
+<li>Entites of the same type with the same identity will be stored only once and referenced from the collections or named item slots.</li>
+<li>Entity state in the Entity DB is be automatically propagated to all collections or named item slots that reference that entity.</li>
+</ul>
+</li>
+<li><strong>UI component system</strong>: a set of utilites that allow you to write decoupled, reusable components. Each component declares it&apos;s dependencies which are injected to the component when the application is started.</li>
+</ul>
+<h2>The flow</h2>
+<p>There are two ways to affect the application state:</p>
+<ol>
+<li>URL change</li>
+<li>UI action (e.g. clicking on a button) which sends the command to the controller</li>
+</ol>
+<h3>URL change flow</h3>
+<ol>
+<li>When the URL changes, the router will transform the URL into the map that represents the data contained in the URL.</li>
+<li>The route params map will be sent to the controller manager which will then start or stop the controllers accordingly.</li>
+<li>Each controller can mutate the application state</li>
+<li>Application state changes are propagated to the UI</li>
+</ol>
+<div class="diagram diagram--narrow"><img src="/route_change.svg" alt="URL change diagram" title="URL change diagram"></div>
+<h3>UI action flow</h3>
+<ol>
+<li>When the user performs an action (e.g. clicks on a button) the command is sent to the controller manager.</li>
+<li>Controller manager routes the command to the appropriate controller (based on the command <code>:topic</code>)</li>
+<li>Controller reacts to the command and mutates the application state</li>
+<li>Application state changes are propagated to the UI</li>
+</ol>
+<div class="diagram diagram--narrow"><img src="/command_sent.svg" alt="UI action diagram" title="UI action diagram"></div>
+<hr>
+<p>The code that mutates the application state is always placed in the controllers. <strong>Controllers are the only place in the application where you have the access to the application state.</strong></p>
+<h2>Credits and Inspiration</h2>
+<p>The libraries that had the biggest impact on Keechma:</p>
+<ul>
+<li><a href="http://canjs.com">CanJS</a> - Keechma&apos;s router is ported from CanJS and EntityDB is inspired by the CanJS model store</li>
+<li><a href="https://github.com/Day8/re-frame">Re/Frame</a>. - One-big-atom store, subscriptions and handlers are based of my experience with Re/Frame</li>
+<li><a href="https://github.com/reagent-project/reagent">Reagent</a> - Keechma would be much harder to implement without Reagent&apos;s approach to components</li>
+<li><a href="https://github.com/omcljs/om">Om</a> - Without Om I probably wouldn&apos;t try ClojureScript, so Keechma wouldn&apos;t exist.</li>
+</ul>

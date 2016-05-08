@@ -1,0 +1,137 @@
+_model: api-annotated
+---
+title: API / keechma.app-state documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/keechma/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>keechma</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch current">
+                <a href="/api/keechma/keechma_app-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>app-state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller-manager">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller-manager</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/keechma/keechma_ui-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>ui-component</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-restore-app-db">
+                    <div class="inner"><span>restore-app-db</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-start.21">
+                    <div class="inner"><span>start!</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-stop.21">
+                    <div class="inner"><span>stop!</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">keechma.app-state</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-restore-app-db">
+            <h3>restore-app-db</h3>
+            <div class="usage"><code>(restore-app-db old-app new-app)</code></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-start.21">
+            <h3>start!</h3>
+            <div class="usage"><code>(start! config)</code><code>(start! config should-mount?)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Starts the application. It receives the application config <code>map</code> as the first argument. It receives <code>boolean</code> <code>should-mount?</code> as the second element. Default value for <code>should-mount?</code> is <code>true</code>.</p>
+                    <p>You can pass false to the <code>should-mount?</code> argument if you want to start the app, but you want to manually mount the application (for instance another app could manage mounting and unmounting). In that case you can get the
+                        main app component at the <code>:main-component</code> of the map returned from the <code>start!</code> function.</p>
+                    <p>Application config contains all the parts needed to run the application:</p>
+                    <ul>
+                        <li>Route defintions</li>
+                        <li>Controllers</li>
+                        <li>UI subscriptions</li>
+                        <li>UI components</li>
+                        <li>HTML element to which the component should be mounted</li>
+                        <li>Routes chan (through which the route changes will be communicated)</li>
+                        <li>Commands chan (through which the UI sends the commands to the controllers)</li>
+                    </ul>
+                    <p><code>start!</code> function returns the updated config map which can be passed to the <code>stop!</code> function to stop the application.</p>
+                    <p>Example:</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app-config {<span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:users</span> (<span class="hljs-name">-&gt;users/Controller</span>)}
+                 <span class="hljs-symbol">:subscriptions</span> {<span class="hljs-symbol">:user-list</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [app-db-atom])}
+                 <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> layout/component
+                              <span class="hljs-symbol">:users</span> users/component}
+                 <span class="hljs-symbol">:html-element</span> (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)})
+</code></pre>
+                    <p>If any of the params is missing, the defaults will be used.</p>
+                    <p>When the application is started, the following happens:</p>
+                    <ol>
+                        <li>Routes are expanded (converted to regexps, etc.)</li>
+                        <li>Application binds the listener the history change event</li>
+                        <li>Controller manager is started</li>
+                        <li>Application is (optionally) mounted into the DOM</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-stop.21">
+            <h3>stop!</h3>
+            <div class="usage"><code>(stop! config)</code><code>(stop! config done)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Stops the application. <code>stop!</code> function receives the following as the arguments:</p>
+                    <ul>
+                        <li><code>config</code> - App config map returned from the <code>start!</code> function</li>
+                        <li><code>done</code> - An optional callback function that will be called when the application is stopped.</li>
+                    </ul>
+                    <p>Purpose of the <code>stop!</code> function is to completely clean up after the application. When the application is stopped, the following happens:</p>
+                    <ol>
+                        <li>History change event listener is unbound</li>
+                        <li>Controller manager and any running controllers are stopped</li>
+                        <li>Any channels used by the app (<code>routes-chan</code>, <code>commands-chan</code>,&#x2026;) are closed</li>
+                        <li>Application is unmounted and removed from the DOM</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

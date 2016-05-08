@@ -1,0 +1,355 @@
+_model: api-annotated
+---
+title: API / keechma.ui-component documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/keechma/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>keechma</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_app-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>app-state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller-manager">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller-manager</span></div>
+                </a>
+            </li>
+            <li class="depth-2 current">
+                <a href="/api/keechma/keechma_ui-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>ui-component</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var--.3EUIComponent">
+                    <div class="inner"><span>-&gt;UIComponent</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-constructor">
+                    <div class="inner"><span>constructor</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-IUIComponent">
+                    <div class="inner"><span>IUIComponent</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-redirect">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>redirect</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-send-command">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>send-command</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-subscription">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>subscription</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-current-route">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>current-route</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>component</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-renderer">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>renderer</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="#var-url">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>url</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-map-.3EUIComponent">
+                    <div class="inner"><span>map-&gt;UIComponent</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-resolve-component-dep">
+                    <div class="inner"><span>resolve-component-dep</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-resolve-dep">
+                    <div class="inner"><span>resolve-dep</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-resolve-subscription-dep">
+                    <div class="inner"><span>resolve-subscription-dep</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-system">
+                    <div class="inner"><span>system</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-UIComponent">
+                    <div class="inner"><span>UIComponent</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">keechma.ui-component</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var--.3EUIComponent">
+            <h3>-&gt;UIComponent</h3>
+            <div class="usage"><code>(-&gt;UIComponent component-deps subscription-deps renderer)</code></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-constructor">
+            <h3>constructor</h3>
+            <div class="usage"><code>(constructor opts)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Createas a UIComponent record. Accepts <code>opts</code> as the argument. <code>opts</code> is a map that can have the following params:</p>
+                    <ul>
+                        <li><code>:component-deps</code> - Which child component is this component dependent on</li>
+                        <li><code>:subscription-deps</code> - Which subscriptions is this component dependent on</li>
+                        <li><code>:topic</code> - On which topic should this component send commands (to the controller)</li>
+                        <li><code>:renderer</code> - A renderer function (Reagent component)</li>
+                    </ul>
+                    <p>The UIComponent record is a way to list all the dependencies for a component. When the application is started each component&#x2019;s renderer function will be partiall applied with a verion of it&#x2019;s UIComponent that has the component and
+                        subscription dependencies resolved.</p>
+                    <p>This allows you to write components that are completely decoupled from the rest of the application.</p>
+                    <p>When you want to resolve injected component or subscription dependencies, you can use the functions defined on the <code>UIComponent</code> protocol:</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render</span> [<span class="hljs-title">ctx</span>] ;</span>; <span class="hljs-string">`ctx`</span> is a UIComponent with resolved dependencies
+  (let [child-component (component ctx <span class="hljs-symbol">:component-key</span>)
+        subscription (subscription ctx <span class="hljs-symbol">:subscription-key</span>)])
+
+(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">component</span> <span class="hljs-params">(constructor {<span class="hljs-symbol">:renderer</span> render
+                             <span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:component-key</span>]
+                             <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:subscription-key</span>])</span></span>)
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-IUIComponent">
+            <h3>IUIComponent</h3>
+            <h4 class="type">protocol</h4>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>IUIComponent protocol defines functions that can be called on the UIComponent records.</p>
+                </div>
+            </div>
+            <div class="members">
+                <h4>members</h4>
+                <div class="inner">
+                    <div class="public anchor" id="var-redirect">
+                        <h3>redirect</h3>
+                        <div class="usage"><code>(redirect this params)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Redirects page to the URL generated from params</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-send-command">
+                        <h3>send-command</h3>
+                        <div class="usage"><code>(send-command this command)</code><code>(send-command this command args)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Sends a command to the controller.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-subscription">
+                        <h3>subscription</h3>
+                        <div class="usage"><code>(subscription this key)</code><code>(subscription this key args)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns a subscription based on the key.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-current-route">
+                        <h3>current-route</h3>
+                        <div class="usage"><code>(current-route this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns a current route data. It will use the <code>:current-route-fn</code> that is injected from the outside to return the data.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-component">
+                        <h3>component</h3>
+                        <div class="usage"><code>(component this key)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns a component based on the key.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-renderer">
+                        <h3>renderer</h3>
+                        <div class="usage"><code>(renderer this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns a component renderer function that has the component record partially applied (<code>ctx</code>) as the first argument.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-url">
+                        <h3>url</h3>
+                        <div class="usage"><code>(url this params)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns a URL based on the params. It will use the <code>:url-fn</code> that is injected from the outside to generate the URL based on the current app routes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-map-.3EUIComponent">
+            <h3>map-&gt;UIComponent</h3>
+            <div class="usage"><code>(map-&gt;UIComponent G__9077)</code></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-resolve-component-dep">
+            <h3>resolve-component-dep</h3>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>See <a href="keechma.ui-component.html#var-resolve-dep">resolve-dep</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-resolve-dep">
+            <h3>resolve-dep</h3>
+            <div class="usage"><code>(resolve-dep dep-kw coll-kw component key component-dep)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Resolves a dependency on the UIComponent record. Returns a new version of the record with the resolved dependency.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">news</span><span class="hljs-title">-</span><span class="hljs-title">component</span> <span class="hljs-params">(constructor {<span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:user-profile</span> <span class="hljs-symbol">:similar-news</span>]
+                                  <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:current-news</span> <span class="hljs-symbol">:comments</span>]})</span></span>)
+
+(resolve-dep <span class="hljs-symbol">:subscription-deps</span> <span class="hljs-symbol">:subscriptions</span> news-component <span class="hljs-symbol">:current-news</span> (fn []...))
+;; Returns a new version of the <span class="hljs-string">`news-component`</span> with the <span class="hljs-symbol">:current-news</span> subscription resolved
+
+(resolve-dep <span class="hljs-symbol">:component-deps</span> <span class="hljs-symbol">:components</span> news-component <span class="hljs-symbol">:user-profile</span> user-profile-component))
+;; Returns a new version of the <span class="hljs-string">`news-component`</span> with the <span class="hljs-symbol">:user-profile</span> component resolved
+</code></pre>
+                    <p>Two shorthand functions are defined that allow you to omit first two arguments:</p>
+                    <ul>
+                        <li><code>resolve-subscription-dep</code> - Resolves a subscription dependency</li>
+                        <li><code>resolve-component-dep</code> - Resolves a component dependency</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-resolve-subscription-dep">
+            <h3>resolve-subscription-dep</h3>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>See <a href="keechma.ui-component.html#var-resolve-dep">resolve-dep</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-system">
+            <h3>system</h3>
+            <div class="usage"><code>(system components)</code><code>(system components subscriptions)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Creates a component system.</p>
+                    <p>Component system is a group of components that are interdependent. Each component system must define a <code>:main</code> component which will be returned from the <code>system</code> function.</p>
+                    <p><code>system</code> function resolves dependencies between components.</p>
+                    <p>For example, let&#x2019;s say that your application consists of three components:</p>
+                    <ul>
+                        <li>layout</li>
+                        <li>sidebar</li>
+                        <li>chat room list</li>
+                    </ul>
+                    <p>Layout is rendering the sidebar component and sidebar component is rendering the chat room list component.</p>
+                    <p>Chat room list component has a subscription dependency on <code>:chat-rooms</code> which will return the list of chat rooms to render.</p>
+                    <p>Usually you would either pass the chat rooms subscription from layout to sidebar to the chat room list component, or the chat room list component would have a dependency on a global <code>:chat-rooms</code> subscription.</p>
+                    <p>Keechma allows you to avoid both of these problems:</p>
+                    <ul>
+                        <li>only the chat room list component will know about it&#x2019;s dependencies</li>
+                        <li>the dependencies will be injected from the outside by the <code>system</code> function</li>
+                    </ul>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> layout-renderer [ctx] <span class="hljs-comment">;; ctx is `layout-component` record with resolved dependencies</span>
+[<span class="hljs-symbol">:div.main</span>
+[<span class="hljs-symbol">:div.sidebar</span> [(<span class="hljs-name">component</span> ctx <span class="hljs-symbol">:sidebar</span>)]]]) <span class="hljs-comment">;; Resolve the `:sidebar` component</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> layout-component (<span class="hljs-name">constructor</span> {<span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:sidebar</span>]
+<span class="hljs-symbol">:renderer</span> layout-renderer}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> sidebar-renderer [ctx]
+[<span class="hljs-symbol">:div.sidebar</span>
+[(<span class="hljs-name">component</span> ctx <span class="hljs-symbol">:chat-room-list</span>)]) <span class="hljs-comment">;; Resolve the `:chat-room-list` component</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> sidebar-component (<span class="hljs-name">constructor</span> {<span class="hljs-symbol">:component-deps</span> [<span class="hljs-symbol">:chat-room-list</span>]
+<span class="hljs-symbol">:renderer</span> sidebar-renderer}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> chat-room-list-renderer [ctx]
+(<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [chat-rooms (<span class="hljs-name">subscription</span> ctx <span class="hljs-symbol">:chat-rooms</span>)])) <span class="hljs-comment">;; Resolve the `:chat-rooms` subscription</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> chat-room-list-component (<span class="hljs-name">constructor</span> {<span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:chat-rooms</span>]}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> main-component (<span class="hljs-name">system</span> {<span class="hljs-symbol">:main</span> layout-component <span class="hljs-comment">;; Map compnents to keys</span>
+<span class="hljs-symbol">:sidebar</span> sidebar-component
+<span class="hljs-symbol">:chat-room-list</span> chat-room-list-component}
+{<span class="hljs-symbol">:chat-rooms</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [app-state-atom])})) <span class="hljs-comment">;; Map subscriptions to keys</span>
+</code></pre>
+                    <p>In the example above <code>main-component</code> will be a Reagent component that can be mounted into the DOM, with all of the dependencies between components resolved.</p>
+                    <p><code>system</code> function provided everything that components need from the outside, and all of the components are reusable by design.</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-UIComponent">
+            <h3>UIComponent</h3>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+    </div>
+</div>

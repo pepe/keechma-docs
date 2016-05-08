@@ -23,56 +23,84 @@ var makeSitemap = function(files){
     cacheTime: '84000000',
   });
   var processedFiles = _
-    .chain(files)
-    .map(function(f){
-      return f.substr(5);
-    })
-    .value();
+      .chain(files)
+      .map(function(f){
+        return f.substr(5);
+      })
+      .value();
   _.each(processedFiles, function(f){
     sitemap.add({url: f});
   });
   fs.writeFileSync('dest/sitemap.xml', sitemap.toString());
 }
 
-var handleFile = function(filename, files){
-  var handler = router.getHandler(routes, filename);
-  var ext = path.extname(filename);
-  var cleanFilename = filename.substr(5);
-  var destFilename;
-  console.log('-- STARTING: ' + cleanFilename);
+var handleFile = function(filename, cleanFilename, destFilename, handler, ext, files){
+  console.log('-- STARTING: ' + cleanFilename + ' -> ' + destFilename);
   if(handler){
-    destFilename = path.join('dest', cleanFilename.replace(ext, '') + '.html');
     return Q.nfcall(fs.readFile, filename, 'utf-8')
-    .then(function(content){
-      return handler(content, files, cleanFilename.replace(ext, '') + '.html');
-    }).then(function(content){
-      return Q.nfcall(mkdirp, path.dirname(destFilename)).then(function(){
-        console.log('++ DONE: ' + cleanFilename);
-        return Q.nfcall(fs.writeFile, destFilename, content);
+      .then(function(content){
+        return handler(content, files, destFilename, cleanFilename);
+      }).then(function(content){
+        return Q.nfcall(mkdirp, path.dirname(destFilename)).then(function(){
+          console.log('++ DONE: ' + cleanFilename + ' -> ' + destFilename);
+          return Q.nfcall(fs.writeFile, destFilename, content);
+        });
       });
-    });
   } else {
-    destFilename = path.join('dest', cleanFilename);
-    return Q.nfcall(fs.copy, filename, destFilename, {clobber: true}).then(function(){
-      console.log('++ DONE: ' + cleanFilename);
-    });
+    return Q.nfcall(mkdirp, path.dirname(destFilename)).then(function(){
+      return Q.nfcall(fs.copy, filename, destFilename, {clobber: true}).then(function(){
+        console.log('++ DONE: ' + cleanFilename + ' -> ' + destFilename);
+      });
+    })
   }
+}
+
+var calculateHandlerTree = function(files) {
+  return _.map(_.reduce(files, function(acc, filename){
+    var handler = router.getHandler(routes, filename) || null;
+    var ext = path.extname(filename);
+    var cleanFilename = filename.substr(5);
+    var destFilename;
+    var desc = {};
+
+    if (handler) {
+      var filenameParts = cleanFilename.replace(ext, '').replace(/^guides\/[0-9]+-/, 'guides/').split('/');
+
+      if (filenameParts[filenameParts.length - 1] === 'index') {
+        filenameParts.pop();
+      }
+
+      filenameParts = _.map(filenameParts, function(f){
+        return f.replace(/\./g, '_');
+      })
+      
+      filenameParts.push('contents.lr');
+      filenameParts.unshift('dest');
+      
+      destFilename = path.join.apply(path, filenameParts);
+    } else {
+      destFilename = path.join('assets', path.basename(filename));
+    }
+    acc[destFilename] = {
+      filename: filename,
+      destFilename: destFilename,
+      handler: handler,
+      cleanFilename: cleanFilename,
+      ext: ext
+    }
+    return acc;
+  }, {}), function(file, key){
+    return file;
+  });
 }
 
 console.log('STARTING BUILD.');
 
-fs.copy('site', 'dest', function(err){
-  if(err){
-    throw err;
-  }
-  glob('docs/**/*.*', {}, function(err, files){
-    return Q.all(_.map(files, function(f){
-      return handleFile(f, files);
-    })).done(function(){
-      glob('dest/**/*.html', {}, function(err, files){
-        makeSitemap(files);
-        console.log('BUILD DONE.');
-      });
-    });
+glob('docs/**/*.*', {}, function(err, files){
+  return Q.all(_.map(calculateHandlerTree(files), function(f){
+    return handleFile(f.filename, f.cleanFilename, f.destFilename, f.handler, f.ext, files);
+  })).done(function(){
+    console.log('--- DONE!')
   });
 });
+

@@ -1,0 +1,244 @@
+_model: api-annotated
+---
+title: API / keechma.controller documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/keechma/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>keechma</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_app-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>app-state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch current">
+                <a href="/api/keechma/keechma_controller">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/keechma/keechma_controller-manager">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>controller-manager</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/keechma/keechma_ui-component">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>ui-component</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-dispatcher">
+                    <div class="inner"><span>dispatcher</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-IController">
+                    <div class="inner"><span>IController</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-redirect">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>redirect</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-send-command">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>send-command</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-handler">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>handler</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-params">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>params</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-start">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>start</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-execute">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>execute</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-stop">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>stop</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="#var-is-running.3F">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>is-running?</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">keechma.controller</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-dispatcher">
+            <h3>dispatcher</h3>
+            <div class="usage"><code>(dispatcher app-db-atom in-chan actions)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Helper function to dispatch commands from the <code>handler</code> function.</p>
+                    <p>Most of the time, handler function will just dispatch the commands to other functions. This functions provides a shortcut for that case.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> Controller []
+  IController
+  (<span class="hljs-name">handler</span> [_ app-db-atom in-chan _]
+    (<span class="hljs-name">dispatcher</span> app-db-atom in-chan {<span class="hljs-symbol">:command-name</span> some-fn})))
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-IController">
+            <h3>IController</h3>
+            <h4 class="type">protocol</h4>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Controllers in Keechma are the place where you put the code that has side-effects. They are managed by the <a href="keechma.controller-manager.html">keechma.controller-manager</a> which will start them or stop them based on the current
+                        route.</p>
+                    <p>Each controller implements the <code>params</code> function. <code>params</code> function returns a subset of the route params that are the controller is interested in.</p>
+                    <p>For instance let&#x2019;s say that you have a <code>UserController</code> which should be running only when the user is on the route <code>/users</code>:</p>
+                    <pre><code class="clojure hljs"><span class="hljs-comment">;; let&apos;s say that your routes are defined like this:</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> routes [<span class="hljs-string">&quot;:page&quot;</span>]) <span class="hljs-comment">;; Routes are managed by the app-state library.</span>
+
+<span class="hljs-comment">;; When user goes to the url `/users` the params function would receive</span>
+<span class="hljs-comment">;; something that looks like this:</span>
+
+{<span class="hljs-symbol">:data</span> {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;users&quot;</span>}}
+
+<span class="hljs-comment">;; `params` function returns `true` only when user is on the `:page` &quot;users&quot;</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> UserController []
+  IController
+  (<span class="hljs-name">params</span> [_ route-params]
+    (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> <span class="hljs-string">&quot;users&quot;</span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> route-params [<span class="hljs-symbol">:data</span> <span class="hljs-symbol">:page</span>]))
+     <span class="hljs-literal">true</span>)))
+</code></pre>
+                    <p>When <code>params</code> function returns a non <code>nil</code> value the controller will be started:</p>
+                    <ol>
+                        <li>Controller&#x2019;s <code>start</code> function will be synchronously called with the current application state. This function returns a new version of the state if needed. (if the <code>start</code> function is not doing any changes
+                            to the app-state it must return the received version)</li>
+                        <li>Controller&#x2019;s <code>handler</code> function will be called - this function will receive application state atom, channel through which the controller receives the commands (<code>in-chan</code>) and the channel through which the
+                            controller can send commends to other controllers (<code>out-chan</code>).</li>
+                    </ol>
+                    <p>When <code>params</code> function returns a <code>nil</code> value that instance of the controller will be stopped:</p>
+                    <ol>
+                        <li>Controller&#x2019;s <code>stop</code> function will be synchronously called with the current application state. This function returns a new version of the state if needed - use this function to clean up any data loaded by the controller
+                            (if the <code>stop</code> function is not doing any changes to the app-state it must return the received version).</li>
+                        <li>Controller&#x2019;s <code>in-chan</code> (through which it can receive commands) will be closed.</li>
+                    </ol>
+                    <p>Controller&#x2019;s <code>start</code> and <code>stop</code> functions can asynchronuously send commends to the controller. Calling <code>(execute controller-instance :command)</code> will put that command on the controller&#x2019;s <code>in-chan</code>.
+                        Controller can react to these commands from the <code>handler</code> function. </p>
+                </div>
+            </div>
+            <div class="members">
+                <h4>members</h4>
+                <div class="inner">
+                    <div class="public anchor" id="var-redirect">
+                        <h3>redirect</h3>
+                        <div class="usage"><code>(redirect this params)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Redirects the page to the URL based on the params.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-send-command">
+                        <h3>send-command</h3>
+                        <div class="usage"><code>(send-command this command-name)</code><code>(send-command this command-name args)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Sends a command to another controller</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-handler">
+                        <h3>handler</h3>
+                        <div class="usage"><code>(handler this app-db-atom in-chan out-chan)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Called after the <code>start</code> function. You can listen to the commands on the <code>in-chan</code> inside the <code>go</code> block. This is the function in which you implement anything that reacts to the user commands
+                                    (coming from the UI).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-params">
+                        <h3>params</h3>
+                        <div class="usage"><code>(params this route-params)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Receives the <code>route-params</code> and returns either the <code>params</code> for the controller or <code>nil</code></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-start">
+                        <h3>start</h3>
+                        <div class="usage"><code>(start this params app-db)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Called when the controller is started. Receives the controller <code>params</code> (returned by the <code>params</code> function) and the application state. It must return the application state.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-execute">
+                        <h3>execute</h3>
+                        <div class="usage"><code>(execute this command-name)</code><code>(execute this command-name args)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Puts the command on the controller&#x2019;s <code>in-chan</code> which is passed as an argument to the <code>handler</code> function. Can be called from the <code>start</code> and <code>stop</code> functions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-stop">
+                        <h3>stop</h3>
+                        <div class="usage"><code>(stop this params app-db)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Called when the controller is stopped. Receives the controller <code>params</code> (returned by the <code>params</code> function) and the application state. It must return the application state.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-is-running.3F">
+                        <h3>is-running?</h3>
+                        <div class="usage"><code>(is-running? this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns <code>true</code> if this controller is still running. You can use this if you have some kind of async action, and you want to make sure that the controller is still running when you receive the results.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% set fluid = true %}
+{% set short_header = true %}
+{% block title %}{{this.title}}{% endblock %}
+{% block body %}
+  {{ this.body }}
+  <script src="/jquery.min.js"></script>
+  <script src="/page_effects.js"></script>
+{% endblock %}

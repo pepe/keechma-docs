@@ -1,0 +1,6 @@
+[project]
+name = documentation
+url = http://keechma.com
+
+[packages]
+lektor-webpack-support = 0.1

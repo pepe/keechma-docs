@@ -1,0 +1,87 @@
+_model: api-annotated
+---
+title: keechma-graph-data
+---
+body:
+
+<table class="annotated-wrap"><tr class="with-content"><td class="docs"><div class="header"><h1 class="project-name"><a href="http://example.com/FIXME">keechma-graph-data</a></h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br><p>Example application that renders the graph data</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr></td><td class="dep-version">1.7.0</td></tr><tr><td class="dep-name">org.clojure/clojurescript</td><td class="dotted"><hr></td><td class="dep-version">1.7.170</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr></td><td class="dep-version">0.2.374</td></tr><tr><td class="dep-name">keechma</td><td class="dotted"><hr></td><td class="dep-version">0.1.0-SNAPSHOT</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><pre><code class="language-clojure hljs">(<span class="hljs-name">this</span> space intentionally left almost blank)</code></pre></td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#keechma-graph-data.core">keechma-graph-data.core</a></li></ul></div></td><td class="codes"><pre><code class="language-clojure hljs">&#xA0;</code></pre></td></tr><tr class=""><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-graph-data.core" name="keechma-graph-data.core"><h1 class="project-name">keechma-graph-data.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-graph-data.core
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller]
+            [keechma.edb <span class="hljs-symbol">:as</span> edb]
+            [keechma.ui-component <span class="hljs-symbol">:as</span> ui]
+            [keechma.app-state <span class="hljs-symbol">:as</span> app-state])
+  (<span class="hljs-symbol">:require-macros</span> [reagent.ratom <span class="hljs-symbol">:refer</span> [reaction]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">enable-console-print!</span>)</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Define the initial graph data</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-data
+  [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;User #1&quot;</span> <span class="hljs-symbol">:favorite-users</span> [<span class="hljs-number">2</span> <span class="hljs-number">3</span>]}
+   {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;User #2&quot;</span> <span class="hljs-symbol">:favorite-users</span> [<span class="hljs-number">1</span>]}
+   {<span class="hljs-symbol">:id</span> <span class="hljs-number">3</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;User #3&quot;</span> <span class="hljs-symbol">:favorite-users</span> [<span class="hljs-number">2</span> <span class="hljs-number">1</span> <span class="hljs-number">3</span>]}])</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Process the data so the EntityDB knows how to handle relations</p>
+
+<p>  This function transforms <code>[1,2,3]</code> to [{:id 1}, {:id 2}, {:id 3}].
+  When the data is inserted into the EntityDB, it will set up the links
+  to the real user entities.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> process-user-data
+  [user-data]
+  (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [user]
+         (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> user <span class="hljs-symbol">:favorite-users</span>
+                (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [favorite-user]
+                       {<span class="hljs-symbol">:id</span> favorite-user}) (<span class="hljs-symbol">:favorite-users</span> user)))) user-data))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Set up the schema so users have relations to their favorite users</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema
+  {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>
+           <span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:favorite-users</span> [<span class="hljs-symbol">:many</span> <span class="hljs-symbol">:users</span>]}}})</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> DataController []
+  controller/IController
+  (<span class="hljs-name">params</span> [_ _] <span class="hljs-literal">true</span>)
+  (<span class="hljs-name">start</span> [_ _ app-db]
+    <span class="hljs-comment">;; Inserts the data into the application state</span>
+    (<span class="hljs-name">edb/insert-collection</span> schema app-db <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:list</span> (<span class="hljs-name">process-user-data</span> user-data))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Get the user list from the app state</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-list
+  [app-db]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name">edb/get-collection</span> schema @app-db <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:list</span>)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders one user and a list of it&apos;s favorite users.</p>
+
+<p>  <code>(:favorite-users user)</code> returns a function which will return
+  the list of favorite users for a user. This allows EntityDB to 
+  handle circular relations.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-renderer
+  [user]
+  [<span class="hljs-symbol">:tr</span> {<span class="hljs-symbol">:key</span> (<span class="hljs-symbol">:id</span> user)}
+   [<span class="hljs-symbol">:td</span> (<span class="hljs-symbol">:username</span> user)]
+   [<span class="hljs-symbol">:td</span> (<span class="hljs-name">clojure.string/join</span> <span class="hljs-string">&quot;, &quot;</span> (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> #(<span class="hljs-symbol">:username</span> %) ((<span class="hljs-symbol">:favorite-users</span> user))))]])</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Render the list of users. Each user is rendered by the <code>user-renderer</code>
+  function.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> user-list-renderer
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [user-list-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:user-list</span>)]
+      [<span class="hljs-symbol">:table.table</span>
+       [<span class="hljs-symbol">:thead</span>
+        [<span class="hljs-symbol">:tr</span>
+         [<span class="hljs-symbol">:th</span> <span class="hljs-string">&quot;User&quot;</span>]
+         [<span class="hljs-symbol">:th</span> <span class="hljs-string">&quot;Favorite Users&quot;</span>]]]
+       [<span class="hljs-symbol">:tbody</span>
+        (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> user-renderer @user-list-sub)]])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Defines the renderer and subscription dependencies for
+  the user list component.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-list-component
+  (<span class="hljs-name">ui/constructor</span> {<span class="hljs-symbol">:renderer</span> user-list-renderer
+                   <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:user-list</span>]}))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app-definition {<span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:data</span> (<span class="hljs-name">-&gt;DataController</span>)}
+                     <span class="hljs-symbol">:subscriptions</span> {<span class="hljs-symbol">:user-list</span> user-list}
+                     <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> user-list-component}
+          <span class="hljs-symbol">:html-element</span> (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)})</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defonce</span></span> running-app (<span class="hljs-name">clojure.core/atom</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that starts the application.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> start-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> running-app (<span class="hljs-name">app-state/start!</span> app-definition)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that restarts the application whenever the
+  code is hot reloaded.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restart-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current @running-app]
+    (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> current
+      (<span class="hljs-name">app-state/stop!</span> current start-app!)
+      (<span class="hljs-name">start-app!</span>))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">restart-app!</span>)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(defn <span class="hljs-keyword">on</span>-js-reload []
+  ;; optionally touch your app-state <span class="hljs-keyword">to</span> force rerendering depending <span class="hljs-keyword">on</span>
+  ;; your <span class="hljs-built_in">application</span>
+  ;; (swap! app-state update-<span class="hljs-keyword">in</span> [:__figwheel_counter] inc))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr></table>

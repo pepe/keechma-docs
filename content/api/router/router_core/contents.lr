@@ -1,0 +1,122 @@
+_model: api-annotated
+---
+title: API / router.core documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/router/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1 current">
+                <a href="/api/router/router_core">
+                    <div class="inner"><span>router.core</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-expand-routes">
+                    <div class="inner"><span>expand-routes</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-map-.3Eurl">
+                    <div class="inner"><span>map-&gt;url</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-url-.3Emap">
+                    <div class="inner"><span>url-&gt;map</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">router.core</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-expand-routes">
+            <h3>expand-routes</h3>
+            <div class="usage"><code>(expand-routes routes)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Accepts a vector of routes as the argument. Returnes the expanded version of routes that can be passed to <code>url-&gt;map</code> and <code>map-&gt;url</code> functions.</p>
+                    <p>Elements in the route vector must be string (pattern) or vectors that contain the string pattern and default values for that route.</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> route <span class="hljs-string">&quot;:page&quot;</span>)
+<span class="hljs-comment">;; This route will not be matched by an empty string</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> route-with-defaults [<span class="hljs-string">&quot;:page&quot;</span>, {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;index&quot;</span>}])
+<span class="hljs-comment">;; This route will match an empty string and the :page key will hold </span>
+<span class="hljs-comment">;; the value &quot;index&quot;</span>
+
+(<span class="hljs-name">expand-routes</span> [[<span class="hljs-string">&quot;:page&quot;</span> {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;index&quot;</span>}]
+                <span class="hljs-string">&quot;:page/:action&quot;</span>])
+<span class="hljs-comment">;; &quot;&quot; will be matched as {:page &quot;index&quot;}</span>
+<span class="hljs-comment">;; &quot;foo/bar&quot; will be matched as {:page &quot;foo&quot; :action &quot;bar&quot;}</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-map-.3Eurl">
+            <h3>map-&gt;url</h3>
+            <div class="usage"><code>(map-&gt;url expanded-routes data)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Accepts <code>expanded-routes</code> vector (returned by the <code>expand-routes</code> function) and a map as arguments. Returns a URL part which is the closest representatation of the data contained in the map (based on the <code>expanded-routes</code>                        argument).</p>
+                    <pre><code class="clojure hljs"><span class="hljs-comment">;; define routes</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> routes [[<span class="hljs-string">&quot;:page&quot;</span>, {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;index&quot;</span>}]
+              <span class="hljs-string">&quot;:page/:id&quot;</span>
+              <span class="hljs-string">&quot;:page/:id/:action&quot;</span>]) 
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> expanded-routes (<span class="hljs-name">expand-routes</span> routes))
+
+(<span class="hljs-name">map-&gt;url</span> expanded-routes {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;foo&quot;</span>})
+<span class="hljs-comment">;; &quot;foo&quot;</span>
+
+(<span class="hljs-name">map-&gt;url</span> expanded-routes {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>})
+<span class="hljs-comment">;; &quot;foo/1&quot;</span>
+
+(<span class="hljs-name">map-&gt;url</span> expanded-routes {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:action</span> <span class="hljs-string">&quot;bar&quot;</span> <span class="hljs-symbol">:qux</span> <span class="hljs-string">&quot;baz&quot;</span>})
+<span class="hljs-comment">;; &quot;foo/1/bar?qux=baz&quot;</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-url-.3Emap">
+            <h3>url-&gt;map</h3>
+            <div class="usage"><code>(url-&gt;map expanded-routes url)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Accepts <code>expanded-routes</code> vector (returned by the <code>expand-routes</code> function) and a string as arguments. Returns a map which contains the data represented by the route.</p>
+                    <pre><code class="clojure hljs"><span class="hljs-comment">;; define routes</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> routes [[<span class="hljs-string">&quot;:page&quot;</span>, {<span class="hljs-symbol">:page</span> <span class="hljs-string">&quot;index&quot;</span>}]
+              <span class="hljs-string">&quot;:page/:id&quot;</span>
+              <span class="hljs-string">&quot;:page/:id/:action&quot;</span>]) 
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> expanded-routes (<span class="hljs-name">expand-routes</span> routes))
+
+(<span class="hljs-name">url-&gt;map</span> expanded-routes <span class="hljs-string">&quot;foo&quot;</span>)
+<span class="hljs-comment">;; {:page &quot;foo&quot;}</span>
+
+(<span class="hljs-name">url-&gt;map</span> expanded-routes <span class="hljs-string">&quot;foo/1&quot;</span>)
+<span class="hljs-comment">;; {:page &quot;foo&quot; :id 1}</span>
+
+(<span class="hljs-name">url-&gt;map</span> expanded-routes <span class="hljs-string">&quot;foo?bar=baz&quot;</span>)
+<span class="hljs-comment">;; {:page &quot;foo&quot; :bar &quot;baz&quot;}</span>
+</code></pre></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+_model: guides-index
+---
+order: 1
+---
+title: Keechma
+---
+body:
+
+
+<p><a href="https://clojars.org/keechma"><img src="https://img.shields.io/clojars/v/keechma.svg" alt="Clojars Project"></a></p>
+<p>Keechma is a micro framework for Reagent written in ClojureScript. It gives you a set of utilites that allow you to build the applications that have the following properties:</p>
+<ul>
+<li><strong>Deterministic and predictable behavior</strong>
+<ul>
+<li>Based on the route, you can determine how will the application state look</li>
+<li>UI never &quot;requests&quot; the data it is always provided to it</li>
+</ul>
+</li>
+<li><strong>Unidirectional data flow</strong>
+<ol>
+<li>Route params are derived from the URL</li>
+<li>Application state is derived from the route params</li>
+<li>UI is derived from the application state</li>
+</ol>
+</li>
+<li><strong>Loose coupling between components</strong>
+<ul>
+<li>Communication is performed through <code>core.async</code> channels</li>
+</ul>
+</li>
+<li><strong>Automatic synchronization of the entity states</strong>
+<ul>
+<li>Entity is any data loaded into the app that has identity (e.g. <code>:id</code> column)</li>
+<li>Entities are stored in the EntityDB</li>
+<li>EntityDB propagates entity state to every place where that entity is displayed in the UI</li>
+</ul>
+</li>
+<li><strong>Enforced lifecycle (and memory safety)</strong>
+<ul>
+<li>Automatically load data on route change</li>
+<li>Automatically clean up stale data on route chane</li>
+<li>Automatically set up event listeners on route change (e.g. listener on the WebSocket)</li>
+<li>Automatically tear down event listeners on route change</li>
+</ul>
+</li>
+<li><strong>Applications are first class citizens</strong>
+<ul>
+<li>Applications can be started and stopped</li>
+<li>Applications can be passed around</li>
+<li>Applications can mount sub - applications</li>
+</ul>
+</li>
+<li><strong>UI components are decoupled and reusable</strong>
+<ul>
+<li>UI components can declare it&apos;s dependencies</li>
+<li>Dependencies are injected when the application is started</li>
+<li>Each component has it&apos;s own context</li>
+</ul>
+</li>
+<li><strong>No shared globals</strong>
+<ul>
+<li>Router is bound to the application context</li>
+<li>App state is bound to the application context</li>
+<li>Multiple apps can run at the same time, each with it&apos;s own state</li>
+</ul>
+</li>
+</ul>
+<h2>Documentation</h2>
+<p>Read the <a href="http://keechma.com/01-introduction.html">guides</a> or the <a href="http://keechma.com/api/index.html">API docs</a> to find out more about Keechma.</p>
+<h2>Name</h2>
+<blockquote>
+<p>Ki&#x10D;ma (lat. columna vertebralis) is a Croatian word for backbone / spine.</p>
+</blockquote>
+<p>Yes, it&#x2019;s a nod to BackboneJS and SpineJS.</p>
+<h2>License</h2>
+<p>Copyright &#xA9; 2016 Mihael Konjevic.</p>
+<p>Distributed under the MIT License.</p>

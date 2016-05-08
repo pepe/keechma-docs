@@ -1,0 +1,100 @@
+_model: guide
+---
+order: 3
+---
+title: Controllers
+---
+body:
+
+
+<p>Controllers in Keechma react to route changes and implement any code that has side effects.</p>
+<ul>
+<li>Controllers make AJAX requests.</li>
+<li>Controllers mutate the application state</li>
+<li>Controllers can connect to web sockets and react to received messages, etc.</li>
+</ul>
+<p>Anything that produces a side effect is implemented in a controller. <strong>Controllers are the only place in the application where you have the access to the application state atom.</strong></p>
+<p>For each URL you can have multiple controllers running at once, each one managing a substate of the application. This way you can split the application logic in small pieces, with clearly defined responsobilites.</p>
+<h2>How controllers work</h2>
+<p>Each controller is implemented as a Clojure record which implements the <code>controller/IController</code> protocol. This protocol defines multiple functions, but right now we&apos;re only interested in the <code>params</code> function.</p>
+<p><code>params</code> function receives the route params and returns the subset of params that are needed for the controller to run or <code>nil</code>. Controller Manager relies on the return value from the <code>params</code> function to decide if the controller should be started, stopped or left alone.</p>
+<p>Whenever the URL changes, the manager controller will do the following:</p>
+<ol>
+<li>It will call <code>params</code> function of all registered controllers</li>
+<li>It will compare returned value to the last returned value (returned on the previous URL change)</li>
+<li>Based on the returned value it will do the following:
+<ol>
+<li>If previous value was <code>nil</code> and current value is <code>nil</code> it will do nothing</li>
+<li>If previous value was <code>nil</code> and current value is not <code>nil</code> it will start the controller</li>
+<li>If previous value was not <code>nil</code> and current value is <code>nil</code> it will stop the controller</li>
+<li>If previous value was not <code>nil</code> and current value is not <code>nil</code> but those values are same it will do nothing</li>
+<li>If previous value was not <code>nil</code> and current value is not <code>nil</code> but those values are different it will restart the controller</li>
+</ol>
+</li>
+</ol>
+<h3>An example</h3>
+<p>Let&apos;s say you have to implement a note application (similar to Evernote). You have two URLS:</p>
+<ol>
+<li>A URL that takes you to the list of notes</li>
+<li>A URL that will show the list of notes and a detailed view of the selected note.</li>
+</ol>
+<p>The routes could look like this:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> routes [<span class="hljs-string">&quot;:page&quot;</span>
+             <span class="hljs-string">&quot;:page/:note-id&quot;</span>])
+</code></pre>
+<ul>
+<li>When the user goes to the URL <code>/starred</code> the params received by the Controller Manager would be <code>{:page &quot;starred&quot;}</code></li>
+<li>When the user goes to the URL <code>/starred/1</code> the params received by the Controller Manager would be <code>{:page &quot;starred&quot; :note-id 1}</code></li>
+</ul>
+<p>Since we need to show the list of notes on both URLs, the <code>NoteList</code> controller should just care about the <code>:page</code> param:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> NoteList[]
+    controller/IController
+    (<span class="hljs-name">params</span> [_ route-params]
+        (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> route-params [<span class="hljs-symbol">:data</span> <span class="hljs-symbol">:page</span>])))
+</code></pre>
+<p>The <code>NoteList</code> controller&apos;s <code>params</code> function ensures that it will be running on each url that has the <code>:page</code> param.</p>
+<p>The <code>NoteDetails</code> controller should run only when the <code>:note-id</code> param is present:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> NoteDetails[]
+    controller/IController
+    (<span class="hljs-name">params</span> [_ route-params]
+        (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> route-params [<span class="hljs-symbol">:data</span> <span class="hljs-symbol">:note-id</span>])))
+</code></pre>
+<p>When the user is on the <code>/starred</code> page the <code>NoteDetails</code> controller will not be running. It will run only on the <code>/starred/1</code> URL.</p>
+<div class="diagram"><img src="/controller_manager.svg" alt="Controllers" title="Controllers"></div>
+<p>When using the controllers to manage the application state mutations you can ensure the following:</p>
+<ol>
+<li>State changes will be determenistic.
+<ul>
+<li>Based on the route, you know which controllers are running on the page.</li>
+</ul>
+</li>
+<li>Data is loaded at the right time, when the controller is started.</li>
+<li>Domain logic is split into small, bite sized parts, each controller implements only the subset of the page logic.</li>
+</ol>
+<p><strong>Controllers in Keechma are future proof</strong>, if the UI layout was changed, and the note details page doesn&apos;t show the list of the notes anymore, the only thing that you would need to update is <code>NoteList</code> controller&apos;s <code>params</code> function, everything else would remain the same.</p>
+<p>If React allows you to reason about your app like you&apos;re re - rendering everything every time something changes, <strong>Keechma controllers&apos; goal is to allow you to reason about your app like you&apos;re reloading everything every time the URL changes</strong>.</p>
+<h2>Handling the user actions</h2>
+<p>Besides the data loading, controllers have another task. They react to user commands.</p>
+<p>Whenever the user performs an action - clicks on a button or submits a form, that action is sent to the Controller Manager. Based on the <code>:topic</code> this action will be routed to the appropriate controller.</p>
+<p>Each controller can implement the <code>handler</code> function. That function receives the <code>in-chan</code> as an argument. User commands will be placed on that channel, and the controller can take from the channel and react to the command.</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> UserController []
+    controller/IController
+    (<span class="hljs-name">handler</span> [_ app-db in-chan __]))
+    <span class="hljs-comment">;; Commands will be placed on the `in-chan` which is passed into the handler function</span>
+</code></pre>
+<p>UI components don&apos;t define the <code>:topic</code> at the sending time, it is globally set for each UI component.</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> renderer [ctx]
+    [<span class="hljs-symbol">:button</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:reload-user</span>)} <span class="hljs-string">&quot;Reload User&quot;</span>])
+<span class="hljs-comment">;; Define a (Reagent) component that sends the command</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> button-component (<span class="hljs-name">ui/constructor</span> {<span class="hljs-symbol">:renderer</span> renderer
+                                 <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:user</span>})
+<span class="hljs-comment">;; Set up the component</span>
+</code></pre>
+<p>When you define the application config map (which will be used to start and stop the application), you register each controller under the <code>key</code>. This key will be used as a <code>:topic</code> on which the controller will listen to commands.</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app-config {<span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:user</span> UserController}
+                 <span class="hljs-comment">;; UserController will listen on the `:user` topic</span>
+                 <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> button-component}})
+</code></pre>
+<p>Controllers can only receive the commands if they are currently running. Otherwise the command will be dropped.</p>
+<p>Read the API docs for the <a href="api/keechma.controller-manager.html">Controller Manager</a> and for the <a href="api/keechma.controller.html">Controllers</a>.</p>

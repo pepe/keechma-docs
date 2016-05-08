@@ -1,0 +1,54 @@
+_model: guide
+---
+order: 6
+---
+title: Gluing everything together
+---
+body:
+
+
+<p>In previous articles, we covered all the concepts you need to understand when building an application in Keechma. The last question is, how do we actually assemble everything together and render it on the page?</p>
+<p>Keechma comes with the library that takes care of that. It does the following:</p>
+<ol>
+<li>Binds the router to the history change event (right now pushState isn&apos;t implemented, but it&apos;s coming soon)</li>
+<li>Creates system from the components you registered and resolves their dependencies</li>
+<li>Starts the controller manager</li>
+<li>Mounts the application to the DOM element</li>
+</ol>
+<p>Keechma apps can be started and stopped. Stopping the app will do the cleanup (unbind the router) and remove it from the page.</p>
+<pre><code class="language-clojure hljs">(def app {[...list <span class="hljs-keyword">of</span> routes...]
+          :controllers <span class="hljs-meta">{...map of controllers...}</span>
+          :components <span class="hljs-meta">{...map of components...}</span>
+          :subscriptions <span class="hljs-meta">{...map of component subscriptions...}</span>})
+
+(def running-app (app-state/start! app))
+;; <span class="hljs-type">Starts</span> the application <span class="hljs-keyword">and</span> mounts it to the <span class="hljs-type">DOM</span>
+
+(stop! running-app)
+;; <span class="hljs-type">Stops</span> the application <span class="hljs-keyword">and</span> unmounts it <span class="hljs-keyword">from</span> the <span class="hljs-type">DOM</span>
+</code></pre>
+<h2>Communication between the application parts</h2>
+<p>When starting the app, Keechma will create a commands channel that can be used by the UI components to send commands to the controllers. Keys used to register the controllers are topics on which they listen for messages.</p>
+<p>Example:</p>
+<pre><code class="language-clojure hljs">(def definition {:controllers {:restaurants (c-restaurants/-&gt;<span class="hljs-type">Controller</span>) ;; listens on the `restaurants` topic}
+                 :html-element (.getElementById js/document <span class="hljs-string">&quot;app&quot;</span>)
+                 :subscriptions <span class="hljs-meta">{...map of component subscriptions...}</span>
+                 :components <span class="hljs-meta">{...map of components...}</span>})
+</code></pre>
+<p>When you want a component to be able to send the messages to the controller, you have to <code>assoc</code> it a <code>:topic</code>:</p>
+<pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> system
+  (<span class="hljs-name">ui-component/system</span> 
+    {<span class="hljs-symbol">:restaurants</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> restaurants-component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:restaurants</span>)}))
+
+<span class="hljs-comment">;; Now when you send a message from the component it will be picked by the :restaurants controller:</span>
+
+(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restaurants-renderer [ctx]
+  (<span class="hljs-name">ui-component/send-command</span> <span class="hljs-symbol">:command-name</span> command-args))
+</code></pre>
+<h2>Where to go next</h2>
+<p>If you want to learn more about Keechma you have the following sources at your disposal:</p>
+<ul>
+<li><a href="api/index.html">API docs</a></li>
+<li><a href="07-examples.html">Example applications</a></li>
+<li><a href="08-application-walkthrough.html">Whole application walkthrough</a></li>
+</ul>

@@ -1,0 +1,168 @@
+_model: api-annotated
+---
+title: keechma-login
+---
+body:
+
+<table class="annotated-wrap"><tr class="with-content"><td class="docs"><div class="header"><h1 class="project-name"><a href="http://github.com/keechma/keechma-login">keechma-login</a></h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br><p>Example application with the login workflow.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr></td><td class="dep-version">1.7.0</td></tr><tr><td class="dep-name">org.clojure/clojurescript</td><td class="dotted"><hr></td><td class="dep-version">1.7.170</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr></td><td class="dep-version">0.2.374</td></tr><tr><td class="dep-name">keechma</td><td class="dotted"><hr></td><td class="dep-version">0.1.0-SNAPSHOT</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><pre><code class="language-clojure hljs">(<span class="hljs-name">this</span> space intentionally left almost blank)</code></pre></td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#keechma-login.apps.main">keechma-login.apps.main</a></li><li><a href="#keechma-login.apps.session">keechma-login.apps.session</a></li><li><a href="#keechma-login.components.session">keechma-login.components.session</a></li><li><a href="#keechma-login.components.trello">keechma-login.components.trello</a></li><li><a href="#keechma-login.controllers.login">keechma-login.controllers.login</a></li><li><a href="#keechma-login.controllers.logout">keechma-login.controllers.logout</a></li><li><a href="#keechma-login.controllers.trello">keechma-login.controllers.trello</a></li><li><a href="#keechma-login.core">keechma-login.core</a></li><li><a href="#keechma-login.subscriptions">keechma-login.subscriptions</a></li></ul></div></td><td class="codes"><pre><code class="language-clojure hljs">&#xA0;</code></pre></td></tr><tr class=""><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.apps.main" name="keechma-login.apps.main"><h1 class="project-name">keechma-login.apps.main</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.apps.main
+  (<span class="hljs-symbol">:require</span> [keechma-login.controllers.trello <span class="hljs-symbol">:as</span> trello]
+            [keechma-login.components.trello <span class="hljs-symbol">:as</span> trello-c]
+            [keechma-login.subscriptions <span class="hljs-symbol">:refer</span> [current-user]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app {<span class="hljs-symbol">:routes</span> [<span class="hljs-string">&quot;session/:session-action&quot;</span>]
+          <span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:trello</span> (<span class="hljs-name">trello/-&gt;Controller</span>)}
+          <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> trello-c/component}
+          <span class="hljs-symbol">:subscriptions</span> {<span class="hljs-symbol">:current-user</span> current-user}})</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.apps.session" name="keechma-login.apps.session"><h1 class="project-name">keechma-login.apps.session</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(ns keechma-login<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.session</span>
+  (:require [keechma-login<span class="hljs-selector-class">.controllers</span><span class="hljs-selector-class">.login</span> :as login]
+            [keechma-login<span class="hljs-selector-class">.controllers</span><span class="hljs-selector-class">.logout</span> :as logout]
+            [keechma-login<span class="hljs-selector-class">.components</span><span class="hljs-selector-class">.session</span> :as session-c]
+            [keechma-login<span class="hljs-selector-class">.subscriptions</span> :as subs]
+            [keechma-login<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.main</span> :as main]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app {<span class="hljs-symbol">:routes</span> [<span class="hljs-string">&quot;session/:session-action&quot;</span>]
+          <span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:login</span> (<span class="hljs-name">login/-&gt;Controller</span> main/app)
+                        <span class="hljs-symbol">:logout</span> (<span class="hljs-name">logout/-&gt;Controller</span>)}
+          <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> session-c/component}
+          <span class="hljs-symbol">:subscriptions</span> {<span class="hljs-symbol">:main-app</span> subs/main-app}
+          <span class="hljs-symbol">:html-element</span> (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)})</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.components.session" name="keechma-login.components.session"><h1 class="project-name">keechma-login.components.session</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.components.session
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the login screen</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-login
+  [ctx]
+  [<span class="hljs-symbol">:button.btn.btn-primary</span>
+    {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:login</span>)}
+    <span class="hljs-string">&quot;Login to your Trello account&quot;</span>])</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the main component of the <code>:main</code> application</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-main-app
+  [main-app]
+  [(<span class="hljs-symbol">:main-component</span> main-app)])</code></pre></td></tr><tr class="with-content"><td class="docs"><p>This component is rendered by the <code>session</code> application.
+  - If the <code>session</code> app&apos;s <code>:main-component</code> is <code>nil</code> it will render the login screen
+  - If the <code>session</code> app has <code>:main-component</code> set render the main component of the 
+  <code>:main</code> app </p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [main-app-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:main-app</span>)
+          main-app @main-app-sub]
+      [<span class="hljs-symbol">:div.container&gt;div.row&gt;div.col-xs-12&gt;div.jumbotron</span>
+       (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> main-app
+         (<span class="hljs-name">render-main-app</span> main-app)
+         (<span class="hljs-name">render-login</span> ctx))])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> component (<span class="hljs-name">ui/constructor</span>
+                {<span class="hljs-symbol">:renderer</span> render
+                 <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:main-app</span>]
+                 <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:login</span>}))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.components.trello" name="keechma-login.components.trello"><h1 class="project-name">keechma-login.components.trello</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.components.trello
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the user info based on the loaded data.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-current-user
+  [ctx current-user]
+  [<span class="hljs-symbol">:div</span>
+   [<span class="hljs-symbol">:h1</span> (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;Hello &quot;</span> (<span class="hljs-symbol">:fullName</span> current-user))]
+   [<span class="hljs-symbol">:img</span> {<span class="hljs-symbol">:src</span> (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;https://trello-avatars.s3.amazonaws.com/&quot;</span> (<span class="hljs-symbol">:avatarHash</span> current-user) <span class="hljs-string">&quot;/30.png&quot;</span>)}]
+   [<span class="hljs-symbol">:br</span>]
+   [<span class="hljs-symbol">:a</span> {<span class="hljs-symbol">:href</span> (<span class="hljs-name">ui/url</span> ctx {<span class="hljs-symbol">:session-action</span> <span class="hljs-string">&quot;logout&quot;</span>})} <span class="hljs-string">&quot;Logout&quot;</span>]])</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Resolves the <code>:current-user</code> subscription if it&apos;s <code>nil</code> it shows the 
+  &quot;Loading...&quot; string, otherwise it renders the current user info </p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current-user-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:current-user</span>)
+          current-user @current-user-sub]
+      (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> current-user
+        (<span class="hljs-name">render-current-user</span> ctx current-user)
+        [<span class="hljs-symbol">:div</span> <span class="hljs-string">&quot;Loading user info...&quot;</span>]))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> component (<span class="hljs-name">ui/constructor</span>
+                {<span class="hljs-symbol">:renderer</span> render
+                 <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:current-user</span>]}))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.controllers.login" name="keechma-login.controllers.login"><h1 class="project-name">keechma-login.controllers.login</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.controllers.login
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller]
+            [keechma.app-state <span class="hljs-symbol">:as</span> app-state]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Starts the main application when the user is suceessfully logged
+  in.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> start-app!
+  [main-app app-db-atom]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [started-app (<span class="hljs-name">app-state/start!</span> main-app <span class="hljs-literal">false</span>)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> app-db-atom assoc-in [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:main-app</span>] started-app)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Logs in the user.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> login
+  [main-app app-db-atom _]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [success-cb (<span class="hljs-name"><span class="hljs-builtin-name">partial</span></span> start-app! main-app app-db-atom)]
+    (<span class="hljs-name">.authorize</span> js/Trello #js {<span class="hljs-symbol">:type</span> <span class="hljs-string">&quot;popup&quot;</span>
+                               <span class="hljs-symbol">:name</span> <span class="hljs-string">&quot;Keechma Trello example&quot;</span>
+                               <span class="hljs-symbol">:success</span> success-cb})))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>Handles the user login.</p>
+
+<p>When the user clicks the &quot;Login&quot; button it will use the Trello
+client to create the session.</p>
+
+<p>After that it will start the <code>main</code> application and save the
+reference to it in the <code>session</code> app&apos;s application state.</p>
+
+<p>This allows the <code>session</code> app to render the main application instead
+of the login screen.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span>  Controller [main-app]
+  controller/IController
+  (<span class="hljs-name">params</span> [_ route-params] <span class="hljs-literal">true</span>)
+  (<span class="hljs-name">handler</span> [this app-db-atom in-chan _]
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [main-app (<span class="hljs-symbol">:main-app</span> this)]
+      (<span class="hljs-name">controller/dispatcher</span> app-db-atom in-chan
+                             {<span class="hljs-symbol">:login</span> (<span class="hljs-name"><span class="hljs-builtin-name">partial</span></span> login main-app)}))))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.controllers.logout" name="keechma-login.controllers.logout"><h1 class="project-name">keechma-login.controllers.logout</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.controllers.logout
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller]
+            [keechma.app-state <span class="hljs-symbol">:as</span> app-state]))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>When the user lands on the logout url, and this controller is started,
+it will immediately redirect the user to the frontpage URL.</p>
+
+<p>Logout is handled by the <code>stop</code> function which will stop the main
+application and remove it from the <code>session</code> app&apos;s application state.</p>
+
+<p>This will cause the <code>session</code> app to render the login screen.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span>  Controller []
+  controller/IController
+  (<span class="hljs-name">params</span> [_ route-params]
+    (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> route-params [<span class="hljs-symbol">:data</span> <span class="hljs-symbol">:session-action</span>]) <span class="hljs-string">&quot;logout&quot;</span>)
+      <span class="hljs-literal">true</span>))
+  (<span class="hljs-name">start</span> [this params app-db]
+    (<span class="hljs-name">controller/redirect</span> this {})
+    app-db)
+  (<span class="hljs-name">stop</span> [_ params app-db]
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [kv-store (<span class="hljs-symbol">:kv</span> app-db)
+          main-app (<span class="hljs-symbol">:main-app</span> kv-store)]
+      (<span class="hljs-name">app-state/stop!</span> main-app)
+      (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> app-db <span class="hljs-symbol">:kv</span> (<span class="hljs-name"><span class="hljs-builtin-name">dissoc</span></span> kv-store <span class="hljs-symbol">:main-app</span>)))))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.controllers.trello" name="keechma-login.controllers.trello"><h1 class="project-name">keechma-login.controllers.trello</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.controllers.trello
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> load-user-info [app-db-atom]
+  (<span class="hljs-name">.get</span> (<span class="hljs-name">.-members</span> js/Trello) <span class="hljs-string">&quot;me&quot;</span>
+        (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [user-info]
+          (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> app-db-atom assoc-in [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:current-user</span>] (<span class="hljs-name">js-&gt;clj</span> user-info <span class="hljs-symbol">:keywordize-keys</span> <span class="hljs-literal">true</span>)))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> Controller []
+  controller/IController
+  (<span class="hljs-name">params</span> [_ _] <span class="hljs-literal">true</span>)
+  (<span class="hljs-name">handler</span> [_ app-db-atom _ _]
+    (<span class="hljs-name">load-user-info</span> app-db-atom)))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.core" name="keechma-login.core"><h1 class="project-name">keechma-login.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.core
+  (<span class="hljs-symbol">:require</span> [keechma.app-state <span class="hljs-symbol">:as</span> app-state]
+            [keechma-login.apps.session <span class="hljs-symbol">:as</span> session]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">enable-console-print!</span>)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defonce</span></span> running-app (<span class="hljs-name">clojure.core/atom</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that starts the application.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> start-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> running-app (<span class="hljs-name">app-state/start!</span> session/app)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that restarts the application whenever the
+  code is hot reloaded.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restart-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current @running-app]
+    (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> current
+      (<span class="hljs-name">app-state/stop!</span> current start-app!)
+      (<span class="hljs-name">start-app!</span>))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">restart-app!</span>)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(defn <span class="hljs-keyword">on</span>-js-reload []
+  ;; optionally touch your app-state <span class="hljs-keyword">to</span> force rerendering depending <span class="hljs-keyword">on</span>
+  ;; your <span class="hljs-built_in">application</span>
+  ;; (swap! app-state update-<span class="hljs-keyword">in</span> [:__figwheel_counter] inc))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-login.subscriptions" name="keechma-login.subscriptions"><h1 class="project-name">keechma-login.subscriptions</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-login.subscriptions
+  (<span class="hljs-symbol">:require-macros</span> [reagent.ratom <span class="hljs-symbol">:refer</span> [reaction]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> current-user [app-db]
+  <span class="hljs-comment">;; Returns the current user. Called by the `main` app</span>
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:current-user</span>])))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> main-app [app-db]
+  <span class="hljs-comment">;; Returns the main application. Called by the `session` app</span>
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:main-app</span>])))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr></table>

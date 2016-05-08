@@ -1,0 +1,116 @@
+_model: api-annotated
+---
+title: keechma-counter
+---
+body:
+
+<table class="annotated-wrap"><tr class="with-content"><td class="docs"><div class="header"><h1 class="project-name"><a href="http://github.com/keechma/keechma-counter">keechma-counter</a></h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br><p>Counter application example for Keechma framework.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr></td><td class="dep-version">1.7.0</td></tr><tr><td class="dep-name">org.clojure/clojurescript</td><td class="dotted"><hr></td><td class="dep-version">1.7.170</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr></td><td class="dep-version">0.2.374</td></tr><tr><td class="dep-name">keechma</td><td class="dotted"><hr></td><td class="dep-version">0.1.0-SNAPSHOT</td></tr><tr><td class="dep-name">reagent</td><td class="dotted"><hr></td><td class="dep-version">0.6.0-alpha</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><pre><code class="language-clojure hljs">(<span class="hljs-name">this</span> space intentionally left almost blank)</code></pre></td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#keechma-counter.core">keechma-counter.core</a></li><li><a href="#keechma-counter.counter-controller">keechma-counter.counter-controller</a></li><li><a href="#keechma-counter.main-component">keechma-counter.main-component</a></li></ul></div></td><td class="codes"><pre><code class="language-clojure hljs">&#xA0;</code></pre></td></tr><tr class=""><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-counter.core" name="keechma-counter.core"><h1 class="project-name">keechma-counter.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-counter.core
+  (<span class="hljs-symbol">:require</span> [keechma-counter.counter-controller <span class="hljs-symbol">:as</span> counter]
+            [keechma-counter.main-component <span class="hljs-symbol">:as</span> main-component]
+            [keechma.app-state <span class="hljs-symbol">:as</span> app-state])
+  (<span class="hljs-symbol">:require-macros</span> [reagent.ratom <span class="hljs-symbol">:refer</span> [reaction]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">enable-console-print!</span>)</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Subscription that returns the current value of the counter.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> counter-value-sub
+  [app-state]
+  (<span class="hljs-name">reaction</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> @app-state [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:counter</span>])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Definition of the application.</p>
+
+<ul>
+<li><code>:controllers</code> param holds all of the controllers needed to run the app</li>
+<li>Counter controller is registered under the <code>:counter</code> key. Main component
+has the <code>:counter</code> <code>:topic</code> assoc-ed to it which allows it to send the
+commands to the Counter controller.</li>
+<li><code>:component</code> param holds all the component needed to render the app</li>
+<li><code>:subscriptions</code> param holds the application subscriptions</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> app-definition
+  {<span class="hljs-symbol">:controllers</span> {<span class="hljs-symbol">:counter</span> (<span class="hljs-name">counter/-&gt;Controller</span>)}
+   <span class="hljs-symbol">:components</span> {<span class="hljs-symbol">:main</span> (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> main-component/component <span class="hljs-symbol">:topic</span> <span class="hljs-symbol">:counter</span>)}
+   <span class="hljs-symbol">:subscriptions</span> {<span class="hljs-symbol">:counter-value</span> counter-value-sub}
+   <span class="hljs-symbol">:html-element</span> (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)})</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defonce</span></span> running-app (<span class="hljs-name">clojure.core/atom</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that starts the application.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> start-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">reset!</span></span> running-app (<span class="hljs-name">app-state/start!</span> app-definition)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that restarts the application whenever the
+  code is hot reloaded.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> restart-app!
+  []
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [current @running-app]
+    (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> current
+      (<span class="hljs-name">app-state/stop!</span> current start-app!)
+      (<span class="hljs-name">start-app!</span>))))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name">restart-app!</span>)</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(defn <span class="hljs-keyword">on</span>-js-reload []
+  ;; optionally touch your app-state <span class="hljs-keyword">to</span> force rerendering depending <span class="hljs-keyword">on</span>
+  ;; your <span class="hljs-built_in">application</span>
+  ;; (swap! app-state update-<span class="hljs-keyword">in</span> [:__figwheel_counter] inc))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-counter.counter-controller" name="keechma-counter.counter-controller"><h1 class="project-name">keechma-counter.counter-controller</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-counter.counter-controller
+  (<span class="hljs-symbol">:require</span> [keechma.controller <span class="hljs-symbol">:as</span> controller]
+            [cljs.core.async <span class="hljs-symbol">:refer</span> [&lt;!]])
+  (<span class="hljs-symbol">:require-macros</span> [cljs.core.async.macros <span class="hljs-symbol">:refer</span> [go]]))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>Implements the counter controller.</p>
+
+<ul>
+<li><code>params</code> function returns <code>true</code> because this controller should be always running.</li>
+<li><code>start</code> function sets the default counter value (0). <code>:kv</code> is used to store any key - value pairs</li>
+<li><code>handler</code> function is waiting for commands on the <code>in-chan</code>. When the command comes (if it&apos;s <code>:inc</code> or <code>:dec</code>) it will increment or decrement the counter.</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defrecord</span></span> 
+  Controller []
+  controller/IController
+  (<span class="hljs-name">params</span> [_ _] <span class="hljs-literal">true</span>)
+  (<span class="hljs-name">start</span> [_ params app-db]
+    (<span class="hljs-name">assoc-in</span> app-db [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:counter</span>] <span class="hljs-number">0</span>))
+  (<span class="hljs-name">handler</span> [_ app-db-atom in-chan _] 
+    (<span class="hljs-name">controller/dispatcher</span> app-db-atom in-chan
+                           {<span class="hljs-symbol">:inc</span> #(<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> app-db-atom update-in [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:counter</span>] inc)
+                            <span class="hljs-symbol">:dec</span> #(<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> app-db-atom update-in [<span class="hljs-symbol">:kv</span> <span class="hljs-symbol">:counter</span>] dec)})))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-counter.main-component" name="keechma-counter.main-component"><h1 class="project-name">keechma-counter.main-component</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-counter.main-component
+  (<span class="hljs-symbol">:require</span> [keechma.ui-component <span class="hljs-symbol">:as</span> ui]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Increments the counter if the current value is odd.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> inc-if-odd
+  [ctx counter-val]
+  (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">odd?</span></span> counter-val)
+    (<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:inc</span>)))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Increments the counter after 1 second.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> inc-async
+  [ctx]
+  (<span class="hljs-name">.setTimeout</span> js/window #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:inc</span>) <span class="hljs-number">1000</span>))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Main renderer function. <code>ctx</code> argument is partially applied when
+  the application is started.</p>
+
+<p>  First we resolve the <code>counter-sub</code> subscription which will hold
+  the current counter value.</p>
+
+<p>  User can do one of four actions:</p>
+
+<ol>
+<li>Increment the counter</li>
+<li>Decrement the counter</li>
+<li>Increment the counter if the current value is odd</li>
+<li>Increment the counter in async way (after 1 second)</li>
+</ol>
+
+<hr>
+
+<p>  Each of these actions sends the command to the controller
+  by calling the `(ui/send-command ctx :command) function.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render
+  [ctx]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [counter-sub (<span class="hljs-name">ui/subscription</span> ctx <span class="hljs-symbol">:counter-value</span>)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+      [<span class="hljs-symbol">:p</span>
+       (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;Clicked: &quot;</span> @counter-sub <span class="hljs-string">&quot; times &quot;</span>)
+       [<span class="hljs-symbol">:button</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:inc</span>)} <span class="hljs-string">&quot;+&quot;</span>]
+       <span class="hljs-string">&quot; &quot;</span>
+       [<span class="hljs-symbol">:button</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">ui/send-command</span> ctx <span class="hljs-symbol">:dec</span>)} <span class="hljs-string">&quot;-&quot;</span>]
+       <span class="hljs-string">&quot; &quot;</span>
+       [<span class="hljs-symbol">:button</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">inc-if-odd</span> ctx @counter-sub)} <span class="hljs-string">&quot;Increment if odd&quot;</span>]
+       <span class="hljs-string">&quot; &quot;</span>
+       [<span class="hljs-symbol">:button</span> {<span class="hljs-symbol">:on-click</span> #(<span class="hljs-name">inc-async</span> ctx)} <span class="hljs-string">&quot;Increment async&quot;</span>]])))</code></pre></td></tr><tr class="with-content no-bottom-border"><td class="docs"><p>Definition of the component. This component depends on one subscription:
+  <code>counter-value</code>. This subscription will be resolved on the record when the
+  application is started.</p>
+
+<p>  After that the record will be partially applied to the <code>:renderer</code> function
+  which will allow it to resolve it from the function body and read the value.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> component
+  (<span class="hljs-name">ui/constructor</span> {<span class="hljs-symbol">:renderer</span> render
+                   <span class="hljs-symbol">:subscription-deps</span> [<span class="hljs-symbol">:counter-value</span>]}))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr></table>

@@ -1,0 +1,50 @@
+_model: api-annotated
+---
+title: API / Router 0.1.0
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 current">
+                <a href="/api/router/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1 ">
+                <a href="/api/router/router_core">
+                    <div class="inner"><span>router.core</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-index" id="content">
+        <h1><span class="project-title"><span class="project-name">Router</span> <span class="project-version">0.1.0</span></span></h1>
+        <div class="doc">
+            <p>Router - Pure functional router for ClojureScript applications.</p>
+        </div>
+        <h2>Installation</h2>
+        <p>To install, add the following dependency to your project or build file:</p><div class="pre-deps-wrap"><pre class="deps">[keechma/router &quot;0.1.0&quot;]</pre></div>
+        <h2>Namespaces</h2>
+        <div class="namespace">
+            <h3><a href="router_core">router.core</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="router_core#var-expand-routes">expand-routes</a> </li>
+                    <li> <a href="router_core#var-map-.3Eurl">map-&gt;url</a> </li>
+                    <li> <a href="router_core#var-url-.3Emap">url-&gt;map</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

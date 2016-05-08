@@ -23,27 +23,26 @@ module.exports = (function(){
 
     $('script, .footer, style').remove();
     $('p').closest('tr').addClass('with-content');
-    $('head').append('<link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="../css/modifications.css">');
 
-    if(!navbar){
-      navbar = fs.readFileSync('templates/navbar.html', 'utf-8');
-    }
-    $('body').prepend(navbar);
-    $('.navbar .container').removeClass('container').addClass('container-fluid');
     $('body>table').addClass('annotated-wrap');
-    $('.navbar a').each(function(i, a){
-      var $a = $(a);
-      if(!isURL($a.attr('href'))){
-        $a.attr('href', "../" + $a.attr('href'));
+
+    $('td.docs .docs-header').closest('tr').addClass('section-spacer');
+    $('tr.section-spacer').eq(0).removeClass('section-spacer');
+
+    $('.spacer').parent().each(function(){
+      $prev = $(this).prev();
+      if($prev.is('.with-content')){
+        $prev.addClass('no-bottom-border');
       }
     });
 
-    if(!analytics){
-      analytics = fs.readFileSync('templates/analytics.html', 'utf-8');
-    }
-    $('body').append(analytics);
+    var title = $('h1.project-name').eq(0).text();
 
-    return $.html();
+    return [
+      '_model: api-annotated',
+      'title: ' + title,
+      'body:\n\n' + $('body').html()
+    ].join("\n---\n");
   }
 
 })();

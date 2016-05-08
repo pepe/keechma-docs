@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% from "macros/news.html" import render_news_post %}
+{% block title %}{{ this.title }}{% endblock %}
+{% block body %}
+  <div class="container main-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-title">{{this.title}}</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-body-wrap">
+          {{ this.body|safe }}
+        </div>
+      </div>
+    </div>
+    {% if this._path == '/' %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-section">
+            <div class="page-title">News</div>
+            {% set landing_news = this.children.get('news').children.limit(1) %}
+            {% for n in landing_news %}
+              {{ render_news_post(n, true) }}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
