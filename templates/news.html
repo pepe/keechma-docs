@@ -3,9 +3,21 @@
 {% from "macros/pagination.html" import render_pagination %}
 {% block title %}{{ this.title }}{% endblock %}
 {% block body %}
-  {% for child in this.pagination.items %}
-    {{ render_news_post(child, from_index=true) }}
-  {% endfor %}
-
-  {{ render_pagination(this.pagination) }}
+  <div class="container main-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-title">News</div>
+      </div>
+    </div>
+    <div class="news-wrap">
+      {% for child in this.pagination.items %}
+        {{ render_news_post(child, from_index=true) }}
+      {% endfor %}
+    </div>
+    {% if this.pagination.pages > 1 %}
+      <div class="row">
+        <div class="col-xs-12"> {{ render_pagination(this.pagination) }}</div>
+      </div> 
+    {% endif %}
+  </div>
 {% endblock %}

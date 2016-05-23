@@ -10,9 +10,13 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #333;
     line-height: 1.6;
+    background: #262539;
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+h1, .h1 {
+    margin-top: 25px;
 }
 header {
     background: #212032;
@@ -55,6 +59,19 @@ header {
         }
     }
 }
+footer {
+    color: white;
+    padding: 30px 0;
+}
+.content-wrap {
+    background: white;
+    padding-bottom: 30px;
+}
+
+.content-wrap--fluid {
+    padding-bottom: 0;
+}
+
 .main-container {
 }
 
@@ -90,7 +107,7 @@ header {
 }
 
 .guides-menu {
-    margin-top: 25px;
+    margin-top: 30px;
     a {
         border: none;
         background: #ebebeb;
@@ -111,6 +128,7 @@ header {
     color: white;
     padding: 0 15px;
     font-size: 24px;
+    border-bottom: 3px solid #ccc;
 }
 .page-body-wrap {
     padding-top: 30px;
@@ -141,6 +159,7 @@ header {
 .btn-landing {
     display: block;
     font-size: 150%;
+    margin: 15px 0;
     img {
         display: block;
         width: 33.3%;
@@ -154,11 +173,33 @@ header {
 }
 
 .news-post {
-    h2 {
+    h2.news-title {
         border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+        font-size: 36px;
+    }
+    .meta {
+        background: #f6f6f6;
+        text-align: center;
+        padding: 15px;
+        line-height: 1.2;
+        a {
+            display: block;
+        }
+        img {
+            display: block;
+            margin: 0 auto 15px;
+            height: 100px;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid white;
+        }
     }
 }
-
+.news-wrap {
+    margin-top: 30px;
+}
 /*
 
 github.com style (c) Vasily Polovnyov <vast@whiteants.net>

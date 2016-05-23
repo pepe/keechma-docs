@@ -2,5 +2,14 @@
 {% from "macros/news.html" import render_news_post %}
 {% block title %}{{ this.title }}{% endblock %}
 {% block body %}
-  {{ render_news_post(this) }}
+  <div class="container main-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-title">News</div>
+      </div>
+    </div>
+    <div class="news-wrap">
+      {{ render_news_post(this) }}
+    </div>
+  </div>
 {% endblock %}
