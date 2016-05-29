@@ -1,23 +1,29 @@
 title: Get to know Keechma!
 ---
+seo_title: ClojureScript micro framework for Reagent | Keechma news and docs
+---
+seo_description:
+
+Keechma is a micro framework for Reagent written in ClojureScript. It gives you a set of utilites that make it easier to develop predictable, consistent and deterministic applications.
+---
 body:
 
 <div class="row">
   <div class="col-md-4">
     <a href="/guides" class="btn-info btn btn-landing">
-      <img src="/188723.svg">
+      <img src="/keechma-guides.svg">
       Read the Guides
     </a>
   </div>
    <div class="col-md-4">
     <a href="/annotated" class="btn-info btn btn-landing">
-      <img src="/367549.svg">
+      <img src="/keechma-examples.svg">
       Application Examples
     </a>
   </div>
    <div class="col-md-4">
     <a href="/api" class="btn-info btn btn-landing">
-      <img src="/38239.svg">
+      <img src="/keechma-api-docs.svg">
       API Docs
     </a>
   </div>

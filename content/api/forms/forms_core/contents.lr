@@ -1,0 +1,382 @@
+_model: api-annotated
+---
+title: API / forms.core documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/forms/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>forms</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch current">
+                <a href="/api/forms/forms_core">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>core</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_dirty">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>dirty</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/forms/forms_validator">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>validator</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var--.3EForm">
+                    <div class="inner"><span>-&gt;Form</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-constructor">
+                    <div class="inner"><span>constructor</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-errors-keypaths">
+                    <div class="inner"><span>errors-keypaths</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-Form">
+                    <div class="inner"><span>Form</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-IForm">
+                    <div class="inner"><span>IForm</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-clear-cached-dirty-key-paths.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>clear-cached-dirty-key-paths!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-data">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>data</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-errors">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>errors</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-validate.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>validate!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-init.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>init!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-dirty-paths-valid.3F">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>dirty-paths-valid?</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-is-valid-path.3F">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>is-valid-path?</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-mark-dirty-paths.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>mark-dirty-paths!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-commit.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>commit!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-mark-dirty.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>mark-dirty!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-errors-for-path">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>errors-for-path</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-data-for-path">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>data-for-path</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-state">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>state</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-reset-form.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>reset-form!</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="#var-is-valid.3F">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>is-valid?</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="#var-update.21">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>update!</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-map-.3EForm">
+                    <div class="inner"><span>map-&gt;Form</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">forms.core</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var--.3EForm">
+            <h3>-&gt;Form</h3>
+            <div class="usage"><code>(-&gt;Form state-atom validator opts)</code></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-constructor">
+            <h3>constructor</h3>
+            <div class="usage"><code>(constructor validator)</code><code>(constructor validator data)</code><code>(constructor validator data opts)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Form constructor. It accepts the following arguments:</p>
+                    <ul>
+                        <li><code>validator</code> - returned either by the <code>form.validator/validator</code> or <code>form.validator/comp-validators</code> function</li>
+                        <li><code>data</code> - initial data map</li>
+                        <li><code>opts</code> - map with the form options:
+                            <ul>
+                                <li><code>:on-commit</code> - function to be called when the form is commited (by calling <code>(commit! form)</code>)</li>
+                                <li><code>:auto-validate?</code> - should the form be validated on any data change</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-errors-keypaths">
+            <h3>errors-keypaths</h3>
+            <div class="usage"><code>(errors-keypaths data)</code><code>(errors-keypaths data path results)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Calculates the error key paths from the error map. It is used to mark all invalid key paths as dirty</p>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-Form">
+            <h3>Form</h3>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-IForm">
+            <h3>IForm</h3>
+            <h4 class="type">protocol</h4>
+            <div class="usage"></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>IForm protocol defines the form behavior</p>
+                </div>
+            </div>
+            <div class="members">
+                <h4>members</h4>
+                <div class="inner">
+                    <div class="public anchor" id="var-clear-cached-dirty-key-paths.21">
+                        <h3>clear-cached-dirty-key-paths!</h3>
+                        <div class="usage"><code>(clear-cached-dirty-key-paths! this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Clear dirty key paths that are cached after caling the <code>mark-dirty!</code> function</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-data">
+                        <h3>data</h3>
+                        <div class="usage"><code>(data this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns the atom that holds the current data map.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-errors">
+                        <h3>errors</h3>
+                        <div class="usage"><code>(errors this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns the atom that holds the current error map. This map holds all errors, regardless of the key path <code>dirty</code> state.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-validate.21">
+                        <h3>validate!</h3>
+                        <div class="usage"><code>(validate! this)</code><code>(validate! this dirty-only?)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Validates the form.</p>
+                                <p>When called without the second argument - <code>(validate! form)</code> it will validate the whole form and mark all invalid fields as <code>dirty</code> This should happen on <code>submit</code> so you can show all form
+                                    errors to the user.</p>
+                                <p>When called with <code>true</code> as the second argument - <code>(validate! form true)</code> it wil validate only the fields that are marked as dirty - fields that are not <code>nil</code> and that have a different value
+                                    than in the <code>:init-data</code>. This can be called on <code>change</code> or <code>blur</code> events.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-init.21">
+                        <h3>init!</h3>
+                        <div class="usage"><code>(init! this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Initializes the form. If the form constructor was called with the <code>auto-validate?</code> option set to <code>true</code> it will add a watch to the internal state atom and validate the form every time data was changed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-dirty-paths-valid.3F">
+                        <h3>dirty-paths-valid?</h3>
+                        <div class="usage"><code>(dirty-paths-valid? this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Are the dirty key paths in the valid state</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-is-valid-path.3F">
+                        <h3>is-valid-path?</h3>
+                        <div class="usage"><code>(is-valid-path? this key-path)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Is the key path in the valid state</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-mark-dirty-paths.21">
+                        <h3>mark-dirty-paths!</h3>
+                        <div class="usage"><code>(mark-dirty-paths! this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Creates a diff between the initial data and the current data. Based on that diff it marks the key paths that are dirty.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-commit.21">
+                        <h3>commit!</h3>
+                        <div class="usage"><code>(commit! this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Commits the form. It will validate the form and mark dirty key paths. After that it will call the <code>:on-commit</code> function that can be used to persist the form.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-mark-dirty.21">
+                        <h3>mark-dirty!</h3>
+                        <div class="usage"><code>(mark-dirty! this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Mark all invalid key paths as dirty. It will validate the whole form and cache any key paths that have errors.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-errors-for-path">
+                        <h3>errors-for-path</h3>
+                        <div class="usage"><code>(errors-for-path this key-path)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns errors for the key path. It is possible that this function will return <code>nil</code> even though the errors exist in the <code>:errors</code> map because this function accounts for the key path <code>dirty</code>                                    state. If the field has errors, but it&#x2019;s not dirty this function will return <code>nil</code></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-data-for-path">
+                        <h3>data-for-path</h3>
+                        <div class="usage"><code>(data-for-path this key-path)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns data for the key path</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-state">
+                        <h3>state</h3>
+                        <div class="usage"><code>(state this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Returns inner state atom. The state map holds the following properties:</p>
+                                <ul>
+                                    <li><code>:errors</code> - map of the current form errors</li>
+                                    <li><code>:init-data</code> - initial form data that was passed to the constructor</li>
+                                    <li><code>:data</code> - current form data</li>
+                                    <li><code>:cached-dirty-key-paths</code> - set of the key paths that were dirty when the whole form was validated</li>
+                                    <li><code>:dirty-key-paths</code> - set of the dirty key paths</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-reset-form.21">
+                        <h3>reset-form!</h3>
+                        <div class="usage"><code>(reset-form! this)</code><code>(reset-form! this init-data)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Reset form to the initial state</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-is-valid.3F">
+                        <h3>is-valid?</h3>
+                        <div class="usage"><code>(is-valid? this)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Is the form in the valid state</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public anchor" id="var-update.21">
+                        <h3>update!</h3>
+                        <div class="usage"><code>(update! this data)</code></div>
+                        <div class="doc">
+                            <div class="markdown">
+                                <p>Updates the data, marks dirty key paths and validates the form</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-map-.3EForm">
+            <h3>map-&gt;Form</h3>
+            <div class="usage"><code>(map-&gt;Form G__7593)</code></div>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+        </div>
+    </div>
+</div>

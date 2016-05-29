@@ -1,0 +1,94 @@
+title: Announcing Keechma Forms Library
+---
+_slug: announcing-keechma-forms
+---
+pub_date: 2016-05-28
+---
+author: Mihael Konjević
+---
+gravatar: 9976060bfb26220dd042340394d06b31
+---
+twitter_handle: mihaelkonjevic
+---
+body:
+
+Today, I’m excited to release the [Keechma Forms](http://github.com/keechma/forms) library. Although it’s released under the Keechma brand, you don’t have to use it with the rest of Keechma ecosystem, **it can be used with any Reagent based application**.
+
+## What is Keechma Forms and why does it exist?
+
+Keechma Forms is a library that will help you build forms with delightful UX. It is UI agnostic (as long as you use Reagent), but it gives you a way to display validation errors in the right time.
+
+If you want to learn more about the validations and when they should be rendered I can recommend these links:
+
+- [Form validation - When should error messages be triggered?](http://ux.stackexchange.com/questions/74531/form-validation-when-should-error-messages-be-triggered)
+- [Inline Validation in Web Forms](http://alistapart.com/article/inline-validation-in-web-forms)
+- [Do you suffer from premature validation?](https://ar.al/1161/)
+
+Although some of these articles are pretty old, I still encounter these kind of problems on a daily basis. Implementing forms is hard.
+
+Keechma Forms solves two of the hardest problems when dealing with forms:
+
+- Validation of arbitrarily nested data
+- Keeping track of dirty key paths in arbitrarily nested data
+
+### Data Validation
+
+Most form libraries push the data validation to the component level, which is great for simple use cases, but it starts to fall appart as soon as you have anything remotely complex.
+
+Keechma Forms take a different approach, and validation is always performed on the data. Validators take in the data and return the nested map with the errors.
+
+Example:
+
+```clojure
+;; Define a value validator - first element is validator name, second is the
+;; validator function
+(def not-empty [:not-empty (fn [v] (not (empty? v)))])
+
+;; Define a form validator. Each attribute takes a vector of value validators
+(def user-validator (forms.validator/validator {:username [not-empty]
+                                                :password [not-empty]}))
+
+;; Define a form validator with nested fields
+(def article-validator
+  (forms.validator/validator {:title [not-empty]
+                              :user.username [not-empty]}))
+
+;; Define a form validator which validates a list of objects
+(def team-validator
+  (forms.validator/validator {:name [not-empty]
+                              :players.*.name [not-empty]
+                              :players.*.number [not-empty]}))
+```
+
+Go to the [API documentation](/api/forms/forms_validator/#var-validator) to see more examples. **Validator API can handle any kind of document structure you throw at it.**
+
+### Dirty key paths tracking
+
+This feature is crucial if you want to build forms with the great UX. Badly implemented live validation is worse than validating the whole form on submit.
+
+> The “before and while” method not only caused longer completion times, but also produced higher error rates and worse satisfaction ratings than the other inline validation variations we tested.
+
+_from the [Inline Validation in Web Forms](http://alistapart.com/article/inline-validation-in-web-forms) article_
+
+Keechma Forms allows you to avoid these problems by keeping track of any changes user made to the form. That way you can show the right error messages at the right moment.
+
+## Demo
+
+I've implemented a demo to showcase the features of Keechma Forms. These are the features I've implemented:
+
+- Form should have input fields for: username, password, name and email
+- Form should allow user to add any number of social network accounts
+  + User should add at least one account
+  + Each account should have a select dropdown for the network and input for the username
+- Form should allow user to add any number of phone numbers
+- If the field is in valid state, validation should be performed on blur
+- If the field is in invalid state, validation should be performed on change (keypress) so the error message is removed as soon as possible
+- When the user submits the form, all fields should be validated
+- If the user adds a social network account or phone number **after** they tried to submit the form, new fields should be in valid state
+
+Check out the [demo](http://retroaktive.me/keechma-forms/) to see how it looks. **I think this is the form with the best UX I've ever implemented**. Although you can feel differently, the important thing is that this kind of heavily customized behavior is possible with Keechma Forms. Check out the annotated source code [here](/annotated/form-example).
+
+## Conclusion
+
+Building forms with delightful UX is possible and easy with Keechma Forms, and I hope you'll find it as useful as I do. As always if you have any questions you can ping me on [Twitter](http://twitter.com/mihaelkonjevic) or you can send me an [email](mailto:konjevic@gmail.com)
+

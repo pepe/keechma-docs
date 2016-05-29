@@ -1,0 +1,127 @@
+_model: api-annotated
+---
+title: API / forms.validator documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/forms/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>forms</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_core">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>core</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_dirty">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>dirty</span></div>
+                </a>
+            </li>
+            <li class="depth-2 current">
+                <a href="/api/forms/forms_validator">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>validator</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-comp-validators">
+                    <div class="inner"><span>comp-validators</span></div>
+                </a>
+            </li>
+            <li class="depth-1">
+                <a href="#var-validator">
+                    <div class="inner"><span>validator</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">forms.validator</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-comp-validators">
+            <h3>comp-validators</h3>
+            <div class="usage"><code>(comp-validators &amp; validators)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Creates a validator that is a composition of the validators passed as the arguments:</p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> not-empty [<span class="hljs-symbol">:not-empty</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [v] (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">empty?</span></span> v)))])
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> username-validator (<span class="hljs-name">validator</span> {<span class="hljs-symbol">:username</span> [not-empty]}))
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> password-validator (<span class="hljs-name">validator</span> {<span class="hljs-symbol">:password</span> [not-empty]}))
+
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user-validator (<span class="hljs-name">comp-validators</span> username-validator password-validator))
+
+(<span class="hljs-name">user-validator</span> {<span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:password</span> <span class="hljs-string">&quot;&quot;</span>})
+<span class="hljs-comment">;; returns {:username {:$errors$ {:value &quot;&quot; :failed [:not-empty]}}</span>
+<span class="hljs-comment">;;          :password {:$errors$ {:value &quot;&quot; :failed [:not-empty]}}}</span>
+</code></pre></div>
+            </div>
+        </div>
+        <div class="public anchor" id="var-validator">
+            <h3>validator</h3>
+            <div class="usage"><code>(validator validators)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Creates a form validator. Validator is a map where keys represent the path to data that will be validated and the value is a vector of validator definitions.</p>
+                    <p>Validator definitions are tuples where the first element is a validator name and the second one is the validator function. Validator function receives the value for the key path and returns a boolean. <code>true</code> if the data
+                        is valid and <code>false</code> if it&#x2019;s invalid.</p>
+                    <p><code>validator</code> returns the function that accepts the data and returns the map of validation errors.</p>
+                    <p><strong>Simple example:</strong></p>
+                    <pre><code class="clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> not-empty [<span class="hljs-symbol">:not-empty</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [v] (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">empty?</span></span> v)))])
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> form-validator-1 (<span class="hljs-name">validator</span> {<span class="hljs-symbol">:username</span> [not-empty]}))
+
+(<span class="hljs-name">form-validator-1</span> {<span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;&quot;</span>})
+<span class="hljs-comment">;; returns {:username {:$errors$ {:value &quot;&quot; :failed [:not-empty]}}}</span>
+</code></pre>
+                    <p><strong>Validators can validate nested paths:</strong></p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">form</span><span class="hljs-title">-</span><span class="hljs-title">validator</span><span class="hljs-title">-</span>2 <span class="hljs-params">(validator {<span class="hljs-symbol">:user</span>.name [<span class="hljs-keyword">not</span>-empty]})</span></span>)
+(form-validator-<span class="hljs-number">2</span> {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;&quot;</span>}})
+;; returns {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:username</span> {<span class="hljs-symbol">:</span>$errors$ {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:failed</span> [<span class="hljs-symbol">:not-empty</span>]}}}}
+</code></pre>
+                    <p><strong>Validators can validate objects in the list:</strong></p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">form</span><span class="hljs-title">-</span><span class="hljs-title">validator</span><span class="hljs-title">-</span>3 <span class="hljs-params">(validator {<span class="hljs-symbol">:user</span>.accounts.*.network [<span class="hljs-keyword">not</span>-empty]})</span></span>)
+(form-validator-<span class="hljs-number">3</span> {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:accounts</span> [{<span class="hljs-symbol">:network</span> <span class="hljs-string">&quot;&quot;</span>}]}})
+;; returns {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:accounts</span> {<span class="hljs-number">0</span> {<span class="hljs-symbol">:network</span> {<span class="hljs-symbol">:</span>$errors$ {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:failed</span> [<span class="hljs-symbol">:not-empty</span>]}}}}}}
+</code></pre>
+                    <p><strong>Validators can validate values in the list:</strong></p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">form</span><span class="hljs-title">-</span><span class="hljs-title">validator</span><span class="hljs-title">-</span>4 <span class="hljs-params">(validator {<span class="hljs-symbol">:user</span>.phone-numbers.* [<span class="hljs-keyword">not</span>-empty]})</span></span>)
+(form-validator-<span class="hljs-number">3</span> {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:phone-numbers</span> [<span class="hljs-string">&quot;&quot;</span>]}})
+;; returns {<span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:phone-numbers</span> {<span class="hljs-number">0</span> {<span class="hljs-symbol">:</span>$errors$ {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:failed</span> [<span class="hljs-symbol">:not-empty</span>]}}}}}
+</code></pre>
+                    <p><strong>Validators can be nested inside other validators:</strong></p>
+                    <pre><code class="clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">user</span><span class="hljs-title">-</span><span class="hljs-title">validator</span> <span class="hljs-params">(validator {<span class="hljs-symbol">:username</span> [<span class="hljs-keyword">not</span>-empty]})</span></span>)
+(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">article</span><span class="hljs-title">-</span><span class="hljs-title">validator</span> <span class="hljs-params">(validator {<span class="hljs-symbol">:title</span> [<span class="hljs-keyword">not</span>-empty]
+                                   <span class="hljs-symbol">:user</span> [user-validator]})</span></span>)
+
+(article-validator {<span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;&quot;</span>}})
+;; returns {<span class="hljs-symbol">:title</span> {<span class="hljs-symbol">:</span>$errors {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:failed</span> [<span class="hljs-symbol">:not-empty</span>]}}
+;;          <span class="hljs-symbol">:user</span> {<span class="hljs-symbol">:username</span> {<span class="hljs-symbol">:</span>$errors$ {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-symbol">:failed</span> [<span class="hljs-symbol">:not-nil</span>]}}}}
+</code></pre>
+                    <p>Features provided by the validator ensure that you can validate any data structure, no matter how deeply nested it is. You can also create small focused validators that can be nested or composed which ensures that your validation logic
+                        stays DRY and allows reuse of the validators.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

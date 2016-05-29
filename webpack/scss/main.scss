@@ -3,8 +3,6 @@
 @import "bootswatch.scss";
 @import "api.scss";
 
-@import url("https://fonts.googleapis.com/css?family=Share");
-
 body {
     font-size: 17px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -141,6 +139,10 @@ footer {
     color: #dfe9fc;
     font-size: 32px;
     text-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    h1 {
+        margin: 0 0 5px;
+        font-size: 32px;
+    }
     .clojars-badge-wrap {
         font-size: 50%;
         margin-top: 10px;

@@ -1,0 +1,67 @@
+_model: api-annotated
+---
+title: API / forms.dirty documentation
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 ">
+                <a href="/api/forms/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>forms</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_core">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>core</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch current">
+                <a href="/api/forms/forms_dirty">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>dirty</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/forms/forms_validator">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>validator</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar secondary">
+        <h3><a href="#top"><span class="inner">Public Vars</span></a></h3>
+        <ul>
+            <li class="depth-1">
+                <a href="#var-calculate-dirty-fields">
+                    <div class="inner"><span>calculate-dirty-fields</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-docs" id="content">
+        <h1 class="anchor" id="top">forms.dirty</h1>
+        <div class="doc">
+            <div class="markdown"></div>
+        </div>
+        <div class="public anchor" id="var-calculate-dirty-fields">
+            <h3>calculate-dirty-fields</h3>
+            <div class="usage"><code>(calculate-dirty-fields prev current)</code></div>
+            <div class="doc">
+                <div class="markdown">
+                    <p>Calculates the key paths that are dirty by diffing the initial and current form data.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

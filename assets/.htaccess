@@ -1,0 +1,21 @@
+Redirect 301 /01-introduction.html /guides/introduction/
+Redirect 301 /02-router.html /guides/router/
+Redirect 301 /03-controllers.html /guides/controllers/
+Redirect 301 /04-entitydb.html /guides/entitydb/
+Redirect 301 /05-ui-system.html /guides/ui-system/
+Redirect 301 /06-ui-system.html /guides/ui-system/
+Redirect 301 /07-examples.html /annotated/
+Redirect 301 /08-application-walkthrough.html /guides/application-walkthrough/
+Redirect 301 /99-credits.html /guides/credits/
+
+Redirect 301 /annotated/counter.html /annotated/counter/
+Redirect 301 /annotated/graph-data.html /annotated/graph-data/
+Redirect 301 /annotated/login.html /annotated/login/
+Redirect 301 /annotated/todomvc.html /annotated/todomvc/
+
+Redirect 301 /api/keechma.app-state.html /api/keechma/keechma_app-state/
+Redirect 301 /api/keechma.controller-manager.html /api/keechma/keechma_controller-manager/
+Redirect 301 /api/keechma.controller.html /api/keechma/keechma_controller/
+Redirect 301 /api/keechma.edb.html /api/entitydb/
+Redirect 301 /api/keechma.router.html /api/router/
+Redirect 301 /api/keechma.ui-component.html /api/keechma/keechma_ui-component/

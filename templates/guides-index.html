@@ -1,6 +1,24 @@
 {% extends "layout.html" %}
 {% from "macros/guide.html" import render_guide_page %}
-{% block title %}Guides{% endblock %}
+{% block title %}Keechma Guides Index page | ClojureScript micro framework for Reagent{% endblock %}
+{% block seo_description %}Guides to using Keechma - a micro framework for Reagent written in ClojureScript. These guides take you through the set of utilities that Keechma has to offer.{% endblock %}
+{% block open_graph %}
+  <meta property="og:title" content="Keechma Guides">
+  <meta property="og:site_name" content="Keechma Guides">
+  <meta property="og:url" content="http://www.keechma.com/guides/">
+  <meta property="og:description" content="Guides to using Keechma - a micro framework for Reagent written in ClojureScript.">
+  <meta property="fb:app_id" content="">
+  <meta property="og:image" content="http://www.keechma.com/keechma-facebook-logo.jpg" />
+  <meta property="og:type" content="website">
+{% endblock %}
+{% block twitter_card %}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@keechma">
+  <meta name="twitter:creator" content="@mihaelkonjevic">
+  <meta name="twitter:title" content="Keechma Guides">
+  <meta name="twitter:description" content="Guides to using Keechma - a micro framework for Reagent written in ClojureScript.">
+  <meta name="twitter:image" content="http://www.keechma.com/keechma-twitter-logo.jpg">
+{% endblock %}
 {% block body %}
   {{ render_guide_page(this) }}
 {% endblock %}

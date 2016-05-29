@@ -1,0 +1,93 @@
+_model: api-annotated
+---
+title: API / Forms 0.1.0
+---
+body:
+
+<div class="api-container">
+    
+    <div class="sidebar primary">
+        <h3 class="no-link"><span class="inner">Project</span></h3>
+        <ul class="index-link">
+            <li class="depth-1 current">
+                <a href="/api/forms/">
+                    <div class="inner">Index</div>
+                </a>
+            </li>
+        </ul>
+        <h3 class="no-link"><span class="inner">Namespaces</span></h3>
+        <ul>
+            <li class="depth-1">
+                <div class="no-link">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>forms</span></div>
+                </div>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_core">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>core</span></div>
+                </a>
+            </li>
+            <li class="depth-2 branch">
+                <a href="/api/forms/forms_dirty">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>dirty</span></div>
+                </a>
+            </li>
+            <li class="depth-2">
+                <a href="/api/forms/forms_validator">
+                    <div class="inner"><span class="tree"><span class="top"></span><span class="bottom"></span></span><span>validator</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="namespace-index" id="content">
+        <h1><span class="project-title"><span class="project-name">Forms</span> <span class="project-version">0.1.0</span></span></h1>
+        <div class="doc">
+            <p>Keechma Forms library allows you to build forms (using the Reagent library) that have a great UX.</p>
+        </div>
+        <h2>Installation</h2>
+        <p>To install, add the following dependency to your project or build file:</p><div class="pre-deps-wrap"><pre class="deps">[forms &quot;0.1.0&quot;]</pre></div>
+        <h2>Namespaces</h2>
+        <div class="namespace">
+            <h3><a href="forms_core">forms.core</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="forms_core#var--.3EForm">-&gt;Form</a> </li>
+                    <li> <a href="forms_core#var-constructor">constructor</a> </li>
+                    <li> <a href="forms_core#var-errors-keypaths">errors-keypaths</a> </li>
+                    <li> <a href="forms_core#var-Form">Form</a> </li>
+                    <li> <a href="forms_core#var-IForm">IForm</a> </li>
+                    <li> <a href="forms_core#var-map-.3EForm">map-&gt;Form</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="namespace">
+            <h3><a href="forms_dirty">forms.dirty</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="forms_dirty#var-calculate-dirty-fields">calculate-dirty-fields</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="namespace">
+            <h3><a href="forms_validator">forms.validator</a></h3>
+            <div class="doc">
+                <div class="markdown"></div>
+            </div>
+            <div class="index">
+                <p>Public variables and functions:</p>
+                <ul>
+                    <li> <a href="forms_validator#var-comp-validators">comp-validators</a> </li>
+                    <li> <a href="forms_validator#var-validator">validator</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

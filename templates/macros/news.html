@@ -1,26 +1,32 @@
 {% macro render_news_post(post, from_index=false) %}
-  <div class="news-post">
-    <div class="row">
-      <div class="col-xs-3">
-        <p class="meta">
-          <img src="http://www.gravatar.com/avatar/{{post.gravatar}}?s=200&d=retro">
-          {% if post.twitter_handle %}
-            <a href="https://twitter.com/{{ post.twitter_handle}}">{{ post.author or post.twitter_handle }}</a>
-          {% else %}
-            {{ post.author }}
-          {% endif %}
-          on {{ post.pub_date|dateformat }}
-        </p>
+  <div itemscope itemtype="http://schema.org/NewsArticle">
+    <div class="news-post">
+      <div class="row">
+        <div class="col-xs-3">
+          <p class="meta">
+            <img src="http://www.gravatar.com/avatar/{{post.gravatar}}?s=200&d=retro" alt="Keechma author {{ post.author }}" title="Keechma author {{ post.author }}">
+            {% if post.twitter_handle %}
+              <a href="https://twitter.com/{{ post.twitter_handle}}">{{ post.author or post.twitter_handle }}</a>
+            {% else %}
+              {{ post.author }}
+            {% endif %}
+            on {{ post.pub_date|dateformat }}
+          </p>
+        </div>
+        <div class="col-xs-9">
+          <h2 class="news-title" itemprop="headline">
+            {% if from_index %}
+              <a href="{{ post|url }}">{{ post.title }}</a>
+            {% else %}
+              {{ post.title }}
+            {% endif %}
+          </h2>
+          <div itemprop="articleBody">
+            {{ post.body }}
+          </div>
+        </div>
+        
       </div>
-      <div class="col-xs-9">
-        {% if from_index %}
-          <h2 class="news-title"><a href="{{ post|url }}">{{ post.title }}</a></h2>
-        {% else %}
-          <h2 class="news-title">{{ post.title }}</h2>
-        {% endif %}
-        {{ post.body }}
-      </div>
-      
     </div>
   </div>
 {% endmacro %}

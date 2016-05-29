@@ -6,12 +6,49 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{ '/static/gen/styles.css'|url }}">
-    <title>Keechma - {% block title %}Welcome{% endblock %}</title>
+    <title>{% block title %}Keechma | ClojureScript micro framework for Reagent{% endblock %}</title>
+    <meta name="description" content="{% block seo_description %}Keechma is a micro framework for Reagent written in ClojureScript. It gives you a set of utilites that make it easier to develop predictable, consistent and deterministic applications.{% endblock %}">
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    {% block open_graph %}
+      <meta property="og:title" content="ClojureScript micro framework for Reagent | Keechma news and documentation">
+      <meta property="og:site_name" content="Keechma">
+      <meta property="og:url" content="http://www.keechma.com/">
+      <meta property="og:description" content="Keechma is a micro framework for Reagent written in ClojureScript. It gives you a set of utilites that make it easier to develop predictable, consistent and deterministic applications.">
+      <meta property="fb:app_id" content="">
+      <meta property="og:image" content="http://www.keechma.com/keechma-facebook-logo.jpg" />
+      <meta property="og:type" content="website">
+    {% endblock %}
+    {% block twitter_card %}
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:site" content="@keechma">
+      <meta name="twitter:creator" content="@mihaelkonjevic">
+      <meta name="twitter:title" content="ClojureScript micro framework for Reagent | Keechma news and documentation">
+      <meta name="twitter:description" content="Keechma is a micro framework for Reagent written in ClojureScript. It gives you a set of utilites that make it easier to develop predictable, consistent and deterministic applications.">
+      <meta name="twitter:image" content="http://www.keechma.com/keechma-twitter-logo.jpg">
+    {% endblock %}
   </head>
   <body>
     <header {% if short_header %}class="landing-header"{% endif %}>
       <div class="container{% if fluid %}-fluid{% endif %}">
-        <a class="pull-left" href="/"><img src="/logo.png" id="logo"></a>
+        <div itemscope itemtype="http://schema.org/Organization">
+          <a itemprop="url" class="pull-left" href="http://www.keechma.com/"><img id="logo" itemprop="logo" src="/keechma-reagent-clojurescript-logo.png" alt="Keechma is a pluggable micro framework for Reagent written in ClojureScript" title="Keechma is a pluggable micro framework for Reagent written in ClojureScript" /></a>
+        </div>
         <ul class="nav-main list-unstyled pull-right">
           <li>
             <a {% if this._path == '/' %} class="active"{% endif %}href="{{ '/'|url }}">Home</a>
@@ -38,7 +75,7 @@
           <div class="container">
             <div class="row">
               <div class="col-xs-12">
-                Keechma is pluggable micro framework for Reagent.
+                <h1>Keechma is pluggable micro framework for Reagent written in ClojureScript.</h1>
               </div>
             </div>
             <div class="row">

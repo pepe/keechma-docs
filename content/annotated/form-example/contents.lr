@@ -1,0 +1,185 @@
+_model: api-annotated
+---
+title: keechma-forms-example
+---
+body:
+
+<table class="annotated-wrap"><tr><td class="docs"><div class="header"><h1 class="project-name">keechma-forms-example</h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr></td><td class="dep-version">1.7.0</td></tr><tr><td class="dep-name">org.clojure/clojurescript</td><td class="dotted"><hr></td><td class="dep-version">1.7.228</td></tr><tr><td class="dep-name">json-html</td><td class="dotted"><hr></td><td class="dep-version">0.4.0</td></tr><tr><td class="dep-name">reagent</td><td class="dotted"><hr></td><td class="dep-version">0.5.1</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><pre><code class="language-clojure hljs">(<span class="hljs-name">this</span> space intentionally left almost blank)</code></pre></td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#keechma-forms-example.core">keechma-forms-example.core</a></li><li><a href="#keechma-forms-example.core">keechma-forms-example.core</a></li></ul></div></td><td class="codes"><pre><code class="language-clojure hljs">&#xA0;</code></pre></td></tr><tr class=""><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-forms-example.core" name="keechma-forms-example.core"><h1 class="project-name">keechma-forms-example.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-forms-example.core)</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr><tr class="section-spacer"><td class="docs"><div class="docs-header"><a class="anchor" href="#keechma-forms-example.core" name="keechma-forms-example.core"><h1 class="project-name">keechma-forms-example.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">ns</span></span> keechma-forms-example.core
+  (<span class="hljs-symbol">:require</span> [reagent.core <span class="hljs-symbol">:as</span> reagent]
+            [forms.core <span class="hljs-symbol">:as</span> f]
+            [forms.validator <span class="hljs-symbol">:as</span> v]
+            [json-html.core <span class="hljs-symbol">:as</span> j]))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Shared validator definitions</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> validations
+  {<span class="hljs-symbol">:not-empty</span> {<span class="hljs-symbol">:message</span> <span class="hljs-string">&quot;can&apos;t be empty&quot;</span>
+               <span class="hljs-symbol">:validator</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [v] (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">empty?</span></span> v)))}
+   <span class="hljs-symbol">:valid-email</span> {<span class="hljs-symbol">:message</span> <span class="hljs-string">&quot;is not valid email&quot;</span>
+                 <span class="hljs-symbol">:validator</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [v] (<span class="hljs-name"><span class="hljs-builtin-name">not=</span></span> <span class="hljs-number">-1</span> (<span class="hljs-name">.indexOf</span> (<span class="hljs-name"><span class="hljs-builtin-name">or</span></span> v <span class="hljs-string">&quot;&quot;</span>) <span class="hljs-string">&quot;@&quot;</span>)))}
+   <span class="hljs-symbol">:long-enough</span> {<span class="hljs-symbol">:message</span> <span class="hljs-string">&quot;is too short&quot;</span>
+                 <span class="hljs-symbol">:validator</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [v] (<span class="hljs-name"><span class="hljs-builtin-name">&gt;</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> v) <span class="hljs-number">6</span>))}})</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Helper function that extracts the validator definitions.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> to-validator
+  [validations config]
+  (<span class="hljs-name">reduce-kv</span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [m attr v]
+               (<span class="hljs-name"><span class="hljs-builtin-name">assoc</span></span> m attr
+                      (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [k] [k (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> validations [k <span class="hljs-symbol">:validator</span>])]) v))) {} config))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Defines the validator for the form.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">validator</span></span>
+  (v/validator
+   (to-validator validations
+                 {<span class="hljs-symbol">:username</span> [<span class="hljs-symbol">:not-empty</span>]
+                  <span class="hljs-symbol">:name</span> [<span class="hljs-symbol">:not-empty</span>]
+                  <span class="hljs-symbol">:email</span> [<span class="hljs-symbol">:valid-email</span>]
+                  <span class="hljs-symbol">:password</span> [<span class="hljs-symbol">:long-enough</span>]
+                  <span class="hljs-symbol">:accounts</span>.*.username [<span class="hljs-symbol">:not-empty</span>] ;; Validate username <span class="hljs-keyword">for</span> each account
+                  <span class="hljs-symbol">:accounts</span>.*.network [<span class="hljs-symbol">:not-empty</span>] ;; Validate network <span class="hljs-keyword">for</span> each account
+                  <span class="hljs-symbol">:accounts</span> [<span class="hljs-symbol">:not-empty</span>] ;; Account list must have entries
+                  <span class="hljs-symbol">:phone-numbers</span>.* [<span class="hljs-symbol">:not-empty</span>]}))) ;; Validate each phone number <span class="hljs-keyword">in</span> a list</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Validate each phone number in a list</p>
+</td><td class="codes"></td></tr><tr class="with-content"><td class="docs"><p>Bind validator to the form</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(def form
+  (f/<span class="hljs-function"><span class="hljs-keyword">constructor</span> <span class="hljs-title">validator</span>))</span></code></pre></td></tr><tr class="with-content"><td class="docs"><p>Create a form instance</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> inited-form
+  (<span class="hljs-name">form</span> {}))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Set the value of the key path in the data atom</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> setter
+  [path data-atom]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+    (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> data-atom assoc-in path (<span class="hljs-name"><span class="hljs-builtin-name">..</span></span> e -target -value))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Adds a new entry to the <code>:accounts</code> attribute. After the data is added it will
+  validate the form to potentially remove the validation error for the <code>:accounts</code>
+  attribute.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> add-social-media-account
+  [form]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+    (<span class="hljs-name">.preventDefault</span> e)
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+          form-data @form-data-atom
+          accounts (<span class="hljs-name"><span class="hljs-builtin-name">or</span></span> (<span class="hljs-symbol">:accounts</span> form-data) [])]
+      (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> form-data-atom assoc <span class="hljs-symbol">:accounts</span> (<span class="hljs-name"><span class="hljs-builtin-name">conj</span></span> accounts {<span class="hljs-symbol">:username</span> <span class="hljs-literal">nil</span> <span class="hljs-symbol">:network</span> <span class="hljs-literal">nil</span>}))
+      (<span class="hljs-name">f/validate!</span> form <span class="hljs-literal">true</span>))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Adds a new entry to the <code>:phone-numbers</code> attribute. After the data is added it will
+  validate the form to potentially remove the validation error for the <code>:phone-numbers</code>
+  attribute.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> add-phone-number
+  [form]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+    (<span class="hljs-name">.preventDefault</span> e)
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+          form-data @form-data-atom
+          accounts (<span class="hljs-name"><span class="hljs-builtin-name">or</span></span> (<span class="hljs-symbol">:phone-numbers</span> form-data) [])]
+      (<span class="hljs-name"><span class="hljs-builtin-name">swap!</span></span> form-data-atom assoc <span class="hljs-symbol">:phone-numbers</span> (<span class="hljs-name"><span class="hljs-builtin-name">conj</span></span> accounts <span class="hljs-literal">nil</span>))
+      (<span class="hljs-name">f/validate!</span> form <span class="hljs-literal">true</span>))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the errors for the given key-path.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-errors
+  [form path]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [errors @(<span class="hljs-name">f/errors-for-path</span> form path)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> errors
+      [<span class="hljs-symbol">:div.text-danger.errors-wrap</span> 
+       [<span class="hljs-symbol">:ul.list-unstyled</span>
+        (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [error]
+               [<span class="hljs-symbol">:li</span> {<span class="hljs-symbol">:key</span> error} (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> validations [error <span class="hljs-symbol">:message</span>])]) (<span class="hljs-symbol">:failed</span> errors))]])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders an input field and it&apos;s errors.</p>
+
+<p>  Validation behaves differently based on the key path error state:</p>
+
+<ul>
+<li>If the key path is in the <code>valid</code> state, validation will be triggered on blur</li>
+<li>If the key path is in the <code>invalid</code> state, validation will be triggered on change</li>
+</ul>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-input
+  ([form path label] (<span class="hljs-name">render-input</span> form path label <span class="hljs-symbol">:text</span>))
+  ([form path label type]
+   (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [] 
+     (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+           form-data @form-data-atom
+           is-valid? @(<span class="hljs-name">f/is-valid-path?</span> form path)
+           input-setter (<span class="hljs-name">setter</span> path form-data-atom)
+           on-change-handler (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+                               (<span class="hljs-name">input-setter</span> e)
+                               (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> is-valid?)
+                                 (<span class="hljs-name">f/validate!</span> form <span class="hljs-literal">true</span>)))
+           errors @(<span class="hljs-name">f/errors-for-path</span> form path)]
+       [<span class="hljs-symbol">:div.form-group</span> {<span class="hljs-symbol">:class</span> (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> is-valid?) <span class="hljs-string">&quot;has-error&quot;</span>)}
+        [<span class="hljs-symbol">:label.control-label</span> label]
+        [<span class="hljs-symbol">:input.form-control</span> {<span class="hljs-symbol">:type</span> type
+                              <span class="hljs-symbol">:value</span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> form-data path)
+                              <span class="hljs-symbol">:on-change</span> on-change-handler
+                              <span class="hljs-symbol">:on-blur</span> #(<span class="hljs-name">f/validate!</span> form <span class="hljs-literal">true</span>)}]
+        [render-errors form path]]))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders the select box for the social network. After the social network is selected
+  it will validate the form to show or remove the error messages.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-social-media-select
+  [form path]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+          form-data @form-data-atom
+          is-valid? @(<span class="hljs-name">f/is-valid-path?</span> form path)
+          select-setter (<span class="hljs-name">setter</span> path form-data-atom)
+          set-and-validate (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+                             (<span class="hljs-name">select-setter</span> e)
+                             (<span class="hljs-name">f/validate!</span> form <span class="hljs-literal">true</span>))]
+      [<span class="hljs-symbol">:div.form-group</span> {<span class="hljs-symbol">:class</span> (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">not</span></span> is-valid?) <span class="hljs-string">&quot;has-error&quot;</span>)}
+       [<span class="hljs-symbol">:label.control-label</span> <span class="hljs-string">&quot;Social Network&quot;</span>]
+       [<span class="hljs-symbol">:select.form-control</span> {<span class="hljs-symbol">:on-change</span> set-and-validate 
+                              <span class="hljs-symbol">:value</span> (<span class="hljs-name"><span class="hljs-builtin-name">get-in</span></span> form-data path)}
+        [<span class="hljs-symbol">:option</span> {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;&quot;</span>} <span class="hljs-string">&quot;Please select&quot;</span>]
+        [<span class="hljs-symbol">:option</span> {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;facebook&quot;</span>} <span class="hljs-string">&quot;Facebook&quot;</span>]
+        [<span class="hljs-symbol">:option</span> {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;twitter&quot;</span>} <span class="hljs-string">&quot;Twitter&quot;</span>]
+        [<span class="hljs-symbol">:option</span> {<span class="hljs-symbol">:value</span> <span class="hljs-string">&quot;instagram&quot;</span>} <span class="hljs-string">&quot;Instagram&quot;</span>]]
+       [render-errors form path]])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders a list of the social network accounts (nested) form fields.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-social-media-accounts
+  [form]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+          form-data @form-data-atom
+          accounts (<span class="hljs-symbol">:accounts</span> form-data)]
+      (<span class="hljs-name"><span class="hljs-builtin-name">when</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">pos?</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> accounts))
+        [<span class="hljs-symbol">:div.well.nested-wrap</span> 
+         (<span class="hljs-name"><span class="hljs-builtin-name">doall</span></span> (<span class="hljs-name">map-indexed</span>
+                 (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [idx item]
+                   [<span class="hljs-symbol">:div.social-network-account-wrap</span> {<span class="hljs-symbol">:key</span> idx}
+                    [<span class="hljs-symbol">:h3</span> (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;Account #&quot;</span> (<span class="hljs-name"><span class="hljs-builtin-name">inc</span></span> idx))]
+                    [render-social-media-select form [<span class="hljs-symbol">:accounts</span> idx <span class="hljs-symbol">:network</span>]]
+                    [render-input form [<span class="hljs-symbol">:accounts</span> idx <span class="hljs-symbol">:username</span>] <span class="hljs-string">&quot;Username&quot;</span>]]) accounts))]))))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Renders a list of the phone number input fields</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> render-phone-numbers
+  [form]
+  (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> []
+    (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [form-data-atom (<span class="hljs-name">f/data</span> form)
+          form-data @form-data-atom
+          phone-numbers (<span class="hljs-symbol">:phone-numbers</span> form-data)]
+      [<span class="hljs-symbol">:div.nested-wrap</span> 
+       (<span class="hljs-name"><span class="hljs-builtin-name">doall</span></span> (<span class="hljs-name">map-indexed</span>
+               (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [idx item]
+                 [<span class="hljs-symbol">:div</span> {<span class="hljs-symbol">:key</span> idx}
+                  [render-input form [<span class="hljs-symbol">:phone-numbers</span> idx] (<span class="hljs-name"><span class="hljs-builtin-name">str</span></span> <span class="hljs-string">&quot;Phone number #&quot;</span> (<span class="hljs-name"><span class="hljs-builtin-name">inc</span></span> idx))]]) phone-numbers))])))</code></pre></td></tr><tr class="with-content"><td class="docs"><p>Main template, renders the form and all of the fields. When the form is submitted
+  it will validate the whole form which will potentially render the errors.</p>
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> forms-render
+  [form]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [on-submit (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [e]
+                    (<span class="hljs-name">.preventDefault</span> e)
+                    (<span class="hljs-name">f/validate!</span> form))]
+    [<span class="hljs-symbol">:div.container&gt;div.row&gt;div.col-xs-12</span>
+     [<span class="hljs-symbol">:form</span> {<span class="hljs-symbol">:on-submit</span> on-submit}
+      [<span class="hljs-symbol">:h1</span> <span class="hljs-string">&quot;User Info&quot;</span>]
+      [render-input form [<span class="hljs-symbol">:username</span>] <span class="hljs-string">&quot;Username&quot;</span>]
+      [render-input form [<span class="hljs-symbol">:password</span>] <span class="hljs-string">&quot;Password&quot;</span> <span class="hljs-symbol">:password</span>]
+      [render-input form [<span class="hljs-symbol">:name</span>] <span class="hljs-string">&quot;Name&quot;</span>]
+      [render-input form [<span class="hljs-symbol">:email</span>] <span class="hljs-string">&quot;Email&quot;</span>]
+      [<span class="hljs-symbol">:hr</span>]
+      [<span class="hljs-symbol">:h2</span> <span class="hljs-string">&quot;Social Network accounts&quot;</span>]
+      [<span class="hljs-symbol">:button.btn</span>
+       {<span class="hljs-symbol">:on-click</span> (<span class="hljs-name">add-social-media-account</span> form)}
+       <span class="hljs-string">&quot;Add Social Network account&quot;</span>]
+      [render-social-media-accounts form]
+      [render-errors form <span class="hljs-symbol">:accounts</span>]
+      [<span class="hljs-symbol">:hr</span>]
+      [<span class="hljs-symbol">:h2</span> <span class="hljs-string">&quot;Phone Numbers&quot;</span>]
+      [<span class="hljs-symbol">:button.btn</span>
+       {<span class="hljs-symbol">:on-click</span> (<span class="hljs-name">add-phone-number</span> form)}
+       <span class="hljs-string">&quot;Add Phone Number&quot;</span>]
+      [render-phone-numbers form]
+      [<span class="hljs-symbol">:hr</span>]
+      [<span class="hljs-symbol">:button.btn.btn-primary</span> <span class="hljs-string">&quot;Submit&quot;</span>]]
+     [<span class="hljs-symbol">:hr</span>]
+     [<span class="hljs-symbol">:h1</span> <span class="hljs-string">&quot;Form Data:&quot;</span>]
+     [<span class="hljs-symbol">:div.form-data-wrapper</span>
+      (<span class="hljs-name">j/edn-&gt;hiccup</span> @(<span class="hljs-name">f/data</span> form))]]))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> reload []
+  (<span class="hljs-name">reagent/render</span> [forms-render inited-form]
+                  (<span class="hljs-name">.getElementById</span> js/document <span class="hljs-string">&quot;app&quot;</span>)))</code></pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> ^<span class="hljs-symbol">:export</span> main []
+  (<span class="hljs-name">reload</span>))</code></pre></td></tr><tr><td class="spacer docs">&#xA0;</td><td class="codes"></td></tr></table>
