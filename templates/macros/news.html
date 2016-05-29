@@ -1,16 +1,32 @@
 {% macro render_news_post(post, from_index=false) %}
-  <div itemscope itemtype="http://schema.org/NewsArticle">
+  <div itemscope itemtype="http://schema.org/Article">
     <div class="news-post">
       <div class="row">
         <div class="col-xs-3">
           <p class="meta">
             <img src="http://www.gravatar.com/avatar/{{post.gravatar}}?s=200&d=retro" alt="Keechma author {{ post.author }}" title="Keechma author {{ post.author }}">
             {% if post.twitter_handle %}
-              <a href="https://twitter.com/{{ post.twitter_handle}}">{{ post.author or post.twitter_handle }}</a>
+              <a href="https://twitter.com/{{ post.twitter_handle}}"><span itemprop="author">{{ post.author or post.twitter_handle }}</span></a>
             {% else %}
-              {{ post.author }}
+              <span itemprop="author">{{ post.author }}</span>
             {% endif %}
-            on {{ post.pub_date|dateformat }}
+            on <time itemprop="datePublished" datetime="{{ post.pub_date }}">{{ post.pub_date|dateformat }}</time>
+            <span itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+              <meta itemprop="url" content="http://keechma.com/keechma-reagent-clojurescript-logo.png">
+              <meta itemprop="width" content="600">
+              <meta itemprop="height" content="136">
+            </span>
+            <meta itemprop="name" content="{{ post.title }}">
+            <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+              <meta itemprop="name" content="Keechma">
+              <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+                <meta itemprop="url" content="http://keechma.com/keechma-reagent-clojurescript-logo.png">
+                <meta itemprop="width" content="600">
+                <meta itemprop="height" content="136">
+              </span>
+            </span>
+            <meta itemprop="mainEntityOfPage" content="{{ post|url }}">
+            <meta itemprop="dateModified" content="{{ post.pub_date }}">
           </p>
         </div>
         <div class="col-xs-9">

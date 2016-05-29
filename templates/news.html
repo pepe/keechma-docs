@@ -11,6 +11,9 @@
     </div>
     <div class="news-wrap">
       {% for child in this.pagination.items %}
+        {% if loop.index0 == 0 %}
+          <link itemprop="mainEntityOfPage" href="{{ child|url }}">
+        {% endif %}
         {{ render_news_post(child, from_index=true) }}
       {% endfor %}
     </div>
