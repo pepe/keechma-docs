@@ -6,4 +6,7 @@ url = http://keechma.com
 lektor-webpack-support = 0.1
 
 [servers.production]
+name = Production
 target = ftp://ftp.keechma.com/public_html
+enabled = yes
+default = yes
