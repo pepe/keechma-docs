@@ -44,10 +44,11 @@ header {
                 padding: 0 15px;
                 line-height: 56px;
                 background: lighten($brand-primary, 10%);
-                color: darken($brand-primary, 5%);
+                color: lighten($brand-primary, 50%);
                 &:hover {
                     background: white;
                     text-decoration: none;
+                    color: $brand-primary;
                 }
                 &.active {
                     background: #cf2e14;
