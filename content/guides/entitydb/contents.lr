@@ -66,7 +66,7 @@ body:
              <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:author</span> [<span class="hljs-symbol">:one</span> <span class="hljs-symbol">:users</span>]}}})
 </code></pre>
 <p>EntityDB will now expect a nested <code>author</code> object for each news entity. That object will be unpacked and stored in the <code>users</code> store.</p>
-<p>When you insert the an entity into the EntityDB multiple times, the data will be merged with the previous version. This allows you to write the code that looks like this:</p>
+<p>When you insert an entity into the EntityDB multiple times, the data will be merged with the previous version. This allows you to write the code that looks like this:</p>
 <pre><code class="language-clojure hljs">(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> schema {<span class="hljs-symbol">:users</span> {<span class="hljs-symbol">:id</span> <span class="hljs-symbol">:id</span>}
              <span class="hljs-symbol">:news</span> {<span class="hljs-symbol">:relations</span> {<span class="hljs-symbol">:author</span> [<span class="hljs-symbol">:one</span> <span class="hljs-symbol">:users</span>]}}})
 
@@ -105,7 +105,8 @@ body:
 
 (<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> user {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:username</span> <span class="hljs-string">&quot;retro&quot;</span> <span class="hljs-symbol">:news</span> [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>} {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span>}]})
 
-(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;First News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>}}])
+(<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> news [{<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;First News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>}}
+           {<span class="hljs-symbol">:id</span> <span class="hljs-number">2</span> <span class="hljs-symbol">:title</span> <span class="hljs-string">&quot;Second News&quot;</span> <span class="hljs-symbol">:author</span> {<span class="hljs-symbol">:id</span> <span class="hljs-number">1</span>}}])
 
 (<span class="hljs-name"><span class="hljs-builtin-name">def</span></span> store-v2 (<span class="hljs-name">insert-named-item</span> schema store-v1 <span class="hljs-symbol">:users</span> <span class="hljs-symbol">:current</span> user))
 <span class="hljs-comment">;; Inserts user into the store</span>
