@@ -10,11 +10,11 @@ body:
 <p>Controllers in Keechma react to route changes and implement any code that has side effects.</p>
 <ul>
 <li>Controllers make AJAX requests.</li>
-<li>Controllers mutate the application state</li>
+<li>Controllers mutate the application state.</li>
 <li>Controllers can connect to web sockets and react to received messages, etc.</li>
 </ul>
-<p>Anything that produces a side effect is implemented in a controller. <strong>Controllers are the only place in the application where you have the access to the application state atom.</strong></p>
-<p>For each URL you can have multiple controllers running at once, each one managing a substate of the application. This way you can split the application logic in small pieces, with clearly defined responsobilites.</p>
+<p>Anything that produces a side effect is implemented in a controller. <strong>Controllers are the only places in the application where you have the access to the application state atom.</strong></p>
+<p>For each URL you can have multiple controllers running at once, each one managing a substate of the application. This way you can split the application logic in small pieces, with clearly defined responsibilites.</p>
 <h2>How controllers work</h2>
 <p>Each controller is implemented as a Clojure record which implements the <code>controller/IController</code> protocol. This protocol defines multiple functions, but right now we&apos;re only interested in the <code>params</code> function.</p>
 <p><code>params</code> function receives the route params and returns the subset of params that are needed for the controller to run or <code>nil</code>. Controller Manager relies on the return value from the <code>params</code> function to decide if the controller should be started, stopped or left alone.</p>
@@ -63,7 +63,7 @@ body:
 <div class="diagram"><img src="/controller_manager.svg" alt="Controllers" title="Controllers"></div>
 <p>When using the controllers to manage the application state mutations you can ensure the following:</p>
 <ol>
-<li>State changes will be determenistic.
+<li>State changes will be deterministic.
 <ul>
 <li>Based on the route, you know which controllers are running on the page.</li>
 </ul>
